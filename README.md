@@ -162,17 +162,25 @@
     - 고객이 결제한다 (ok)
     - 호텔 예약이 요청되고 결재가 완료되면 되면 예약 내역이 호텔관리자에게 전달된다 (ok)
     - 호텔관리자는 실제 Room 현황을 체크하여 최종 예약 승인 처리를 한다 (ok)
+    - 호텔관리자는 중간중간 예약 현황을 조회한다 (View-green sticker 의 추가로 ok) 
+    
 
-![image](https://user-images.githubusercontent.com/487999/79684170-47256a00-826a-11ea-9777-e16fafff519a.png)
-    - 고객이 주문을 취소할 수 있다 (ok)
-    - 주문이 취소되면 배달이 취소된다 (ok)
-    - 고객이 주문상태를 중간중간 조회한다 (View-green sticker 의 추가로 ok) 
-    - 주문상태가 바뀔 때 마다 카톡으로 알림을 보낸다 (?)
+![분석설계_검증2](https://user-images.githubusercontent.com/27762942/130018802-14992b35-43ad-405b-a4f7-60a4eb56eedd.png)
+  
+    - 고객이 예약을 취소할 수 있다 (ok)
+    - 예약이 취소되면 Room예약 상태가 변경되고 결재가 취소된다 (ok)    
+    
+![분석설계_검증3](https://user-images.githubusercontent.com/27762942/130018783-77b4184d-5cb8-4f5f-a3af-a39cd9f7c4ca.png)
+    
+    - 호텔관리자가 Room상태를 예약가능 처리 할 수 있다 (ok)
+    - 호텔관리자가 예약요청을 거절 할 수 있다 (ok)
+    - 예약이 취소되면 Room예약 상태가 변경되고 결재가 취소된다 (ok)   
+    - 고객이 예약상태를 중간중간 조회한다 (View-green sticker 의 추가로 ok) 
 
 
 ### 모델 수정
 
-![image](https://user-images.githubusercontent.com/487999/79684176-4e4c7800-826a-11ea-8deb-b7b053e5d7c6.png)
+![분석설계6](https://user-images.githubusercontent.com/27762942/130018799-a3f6f280-8e10-460a-b4b6-344e0248874b.png)
     
     - 수정된 모델은 모든 요구사항을 커버함.
 
