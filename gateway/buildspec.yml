@@ -4,7 +4,7 @@ env:
   variables:
     _PROJECT_NAME: "user04-gateway"
     _DIR_NAME: "gateway"
-    _NAMESPACE: "hotel-svc"
+    _NAMESPACE: "hotels"
 
 phases:
   install:

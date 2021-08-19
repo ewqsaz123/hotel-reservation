@@ -4,7 +4,7 @@ env:
   variables:
     _PROJECT_NAME: "user04-roommanagement"
     _DIR_NAME: "RoomManagement"
-    _NAMESPACE: "hotel-svc"
+    _NAMESPACE: "hotels"
 
 phases:
   install:

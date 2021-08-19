@@ -4,7 +4,7 @@ env:
   variables:
     _PROJECT_NAME: "user04-payment"
     _DIR_NAME: "Payment"
-    _NAMESPACE: "hotel-svc"
+    _NAMESPACE: "hotels"
 
 phases:
   install:
