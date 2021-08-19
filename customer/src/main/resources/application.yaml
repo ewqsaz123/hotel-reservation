@@ -40,9 +40,9 @@ spring:
 server:
   port: 8081
 
-feign:
-  hystrix:
-    enabled: true
+# feign:
+#   hystrix:
+#     enabled: true
 
 # To set thread isolation to SEMAPHORE
 #hystrix:
@@ -52,11 +52,11 @@ feign:
 #        isolation:
 #          strategy: SEMAPHORE
 
-hystrix:
-  command:
-    # 전역설정
-    default:
-      execution.isolation.thread.timeoutInMilliseconds: 610
+# hystrix:
+#   command:
+#     # 전역설정
+#     default:
+#       execution.isolation.thread.timeoutInMilliseconds: 610
 ---
 
 spring:
@@ -82,9 +82,9 @@ spring:
 #         event-out:
 #           destination: fooddelivery
 #           contentType: application/json
-feign:
-  hystrix:
-    enabled: true
+# feign:
+#   hystrix:
+#     enabled: true
 
 # To set thread isolation to SEMAPHORE
 #hystrix:
@@ -94,8 +94,8 @@ feign:
 #        isolation:
 #          strategy: SEMAPHORE
 
-hystrix:
-  command:
-    # 전역설정
-    default:
-      execution.isolation.thread.timeoutInMilliseconds: 610
+# hystrix:
+#   command:
+#     # 전역설정
+#     default:
+#       execution.isolation.thread.timeoutInMilliseconds: 610
