@@ -9,10 +9,10 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: reservation
+        - id: CustomerApp
           uri: http://localhost:8081
           predicates:
-            - Path=/reservation/**
+            - Path=/CustomerApp/**
         - id: payment
           uri: http://localhost:8082
           predicates:
@@ -40,10 +40,10 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: reservation
-          uri: http://reservation:8080
+        - id: CustomerApp
+          uri: http://CustomerApp:8080
           predicates:
-            - Path=/reservation/**
+            - Path=/CustomerApp/**
         - id: payment
           uri: http://payment:8080
           predicates:

@@ -23,15 +23,15 @@
             "name": "Launch PaymentApplication",
             "request": "launch",
             "mainClass": "com.example.payment.PaymentApplication",
-            "projectName": "payment",
+            "projectName": "Payment",
             "vmArgs": "-Dspring.profiles.active=default"
         },
         {
             "type": "java",
-            "name": "Launch ReservationApplication",
+            "name": "Launch CustomerAppApplication",
             "request": "launch",
             "mainClass": "com.example.reservation.ReservationApplication",
-            "projectName": "reservation",
+            "projectName": "CustomerApp",
             "vmArgs": "-Dspring.profiles.active=default"
         },
         {
@@ -39,7 +39,7 @@
             "name": "Launch RoommanagementApplication",
             "request": "launch",
             "mainClass": "com.example.roommanagement.RoommanagementApplication",
-            "projectName": "roommanagement",
+            "projectName": "RoomMangement",
             "vmArgs": "-Dspring.profiles.active=default"
         }
     ]
