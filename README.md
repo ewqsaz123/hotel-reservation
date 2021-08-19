@@ -121,7 +121,7 @@
 
 
 ### 이벤트 도출
-![스크린샷, 2021-08-16 14-34-29](https://user-images.githubusercontent.com/87056402/129515884-8325315f-c256-4f08-bacd-023741af9460.png)
+![분석설계2](https://user-images.githubusercontent.com/27762942/130018792-31a2ec30-300f-4c89-ad9e-00a09f05f0c9.png)
 
 
 ### 부적격 이벤트 탈락
