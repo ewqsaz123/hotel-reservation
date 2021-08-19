@@ -41,15 +41,15 @@ spring:
     gateway:
       routes:
         - id: CustomerApp
-          uri: http://CustomerApp:8080
+          uri: http://user04-CustomerApp:8080
           predicates:
             - Path=/CustomerApp/**
         - id: payment
-          uri: http://payment:8080
+          uri: http://user04-payment:8080
           predicates:
             - Path=/payment/**
         - id: roommanagement
-          uri: http://roommanagement:8080
+          uri: http://user04-roommanagement:8080
           predicates:
             - Path=/roommanagement/**
       # globalcors:
