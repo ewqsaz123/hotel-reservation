@@ -1,4 +1,3 @@
-
 server:
   port: 8088
 
@@ -9,10 +8,10 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: CustomerApp
+        - id: customer
           uri: http://localhost:8081
           predicates:
-            - Path=/CustomerApp/**
+            - Path=/customer/**
         - id: payment
           uri: http://localhost:8082
           predicates:
@@ -40,10 +39,10 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: CustomerApp
-          uri: http://user04-CustomerApp:8080
+        - id: customer
+          uri: http://user04-customer:8080
           predicates:
-            - Path=/CustomerApp/**
+            - Path=/customer/**
         - id: payment
           uri: http://user04-payment:8080
           predicates:

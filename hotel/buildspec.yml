@@ -2,8 +2,8 @@ version: 0.2
 
 env:
   variables:
-    _PROJECT_NAME: "user04-gateway"
-    _DIR_NAME: "gateway"
+    _PROJECT_NAME: "user04-hotel"
+    _DIR_NAME: "hotel"
     _NAMESPACE: "hotels"
 
 phases:
