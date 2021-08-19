@@ -125,18 +125,15 @@
 
 
 ### 부적격 이벤트 탈락
-![image](https://user-images.githubusercontent.com/487999/79683612-4b4f8880-8266-11ea-9519-7e084524a462.png)
+![분석설계2-2](https://user-images.githubusercontent.com/27762942/130022020-6c2f3509-c67d-4996-a70e-01347111fad1.png)
 
     - 과정중 도출된 잘못된 도메인 이벤트들을 걸러내는 작업을 수행함
-        - 주문시>메뉴카테고리선택됨, 주문시>메뉴검색됨 :  UI 의 이벤트이지, 업무적인 의미의 이벤트가 아니라서 제외
+        - 예약 시>PaymentRequested :  결재가 완료되어야 예약이벤트가 발생하는 ACID 트랜잭션을 적용이 필요하므로 RoomReservationRequested이벤트와 통합하여 처리 필요
 
-### 액터, 커맨드 부착하여 읽기 좋게
-![image](https://user-images.githubusercontent.com/487999/79683614-4ee30f80-8266-11ea-9a50-68cdff2dcc46.png)
+### 액터, 커맨드 부착 및 어그리게잇으로 묶기
+![분석설계3](https://user-images.githubusercontent.com/27762942/130018793-e01e48f0-0f85-4cf9-9f60-f1555fa43b5a.png)
 
-### 어그리게잇으로 묶기
-![image](https://user-images.githubusercontent.com/487999/79683618-52769680-8266-11ea-9c21-48d6812444ba.png)
-
-    - app의 Order, store 의 주문처리, 결제의 결제이력은 그와 연결된 command 와 event 들에 의하여 트랜잭션이 유지되어야 하는 단위로 그들 끼리 묶어줌
+    - CustomerApp의 Reservation, RoomManagement 의 Room예약현황관리, 결제의 결제이력은 그와 연결된 command 와 event 들에 의하여 트랜잭션이 유지되어야 하는 단위로 그들 끼리 묶어줌
 
 ### 바운디드 컨텍스트로 묶기
 
