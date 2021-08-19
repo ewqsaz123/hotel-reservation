@@ -41,7 +41,7 @@ spring:
     gateway:
       routes:
         - id: reservation
-          uri: http://app:8080
+          uri: http://reservation:8080
           predicates:
             - Path=/reservation/**
         - id: payment
@@ -52,16 +52,16 @@ spring:
           uri: http://roommanagement:8080
           predicates:
             - Path=/roommanagement/**
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins:
-              - "*"
-            allowedMethods:
-              - "*"
-            allowedHeaders:
-              - "*"
-            allowCredentials: true
+      # globalcors:
+      #   corsConfigurations:
+      #     '[/**]':
+      #       allowedOrigins:
+      #         - "*"
+      #       allowedMethods:
+      #         - "*"
+      #       allowedHeaders:
+      #         - "*"
+      #       allowCredentials: true
 
 server:
   port: 8080
