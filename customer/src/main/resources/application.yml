@@ -69,4 +69,4 @@ spring:
           contentType: application/json
 prop:
   room:
-    url: http://gateway:8080
+    url: ${apiurl}
