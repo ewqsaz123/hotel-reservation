@@ -10,6 +10,17 @@ public class HelloController {
 
     @GetMapping
     String HelloWorld(){
+
+        long randomWithMathRandom = (long) (Math.random() * (2000));
+
+        try {
+            Thread.sleep(randomWithMathRandom);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+
         return "Hello new customer";
     }
     
