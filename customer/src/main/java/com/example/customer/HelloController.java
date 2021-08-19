@@ -11,7 +11,7 @@ public class HelloController {
     @GetMapping
     String HelloWorld(){
 
-        long randomWithMathRandom = (long) (Math.random() * (2000));
+        long randomWithMathRandom = (long) (Math.random() * (2000) + 1000);
 
         try {
             Thread.sleep(randomWithMathRandom);
@@ -21,7 +21,7 @@ public class HelloController {
         }
         
 
-        return "Hello new customer";
+        return "Hello new customer " + randomWithMathRandom;
     }
     
 }
