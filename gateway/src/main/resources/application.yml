@@ -44,19 +44,19 @@ spring:
     gateway:
       routes:
         - id: customer
-          uri: http://customer:8080
+          uri: http://user04-customer:8080
           predicates:
             - Path=/reservations/** 
         - id: payment
-          uri: http://payment:8080
+          uri: http://user04-payment:8080
           predicates:
             - Path=/payments/** 
         - id: hotel
-          uri: http://hotel:8080
+          uri: http://user04-hotel:8080
           predicates:
             - Path=/roomManagements/** 
         - id: viewPage
-          uri: http://viewPage:8080
+          uri: http://user04-viewPage:8080
           predicates:
             - Path=/reservationStatusViews/**
       globalcors:
