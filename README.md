@@ -224,8 +224,6 @@ cd customer
 python policy-handler.py 
 ```
 
-![image](https://user-images.githubusercontent.com/45943968/130162849-3bb3faa1-542d-49e5-9eed-d376c7ad80f1.png)
-
 
 ## CQRS
 
