@@ -224,6 +224,27 @@ cd customer
 python policy-handler.py 
 ```
 
+## CQRS
+
+숙소 생성 및 예약/결재 등 총 Status 에 대하여 고객(customer)/호텔매니저(hotel)가 조회 할 수 있도록 CQRS 로 구현하였다.
+- customer, payment, hotel 개별 Aggregate Status 를 통합 조회하여 성능 Issue 를 사전에 예방할 수 있다.
+- 비동기식으로 처리되어 발행된 이벤트 기반 Kafka 를 통해 수신/처리 되어 별도 Table 에 관리한다
+- Table 모델링
+
+  ![image](https://user-images.githubusercontent.com/45943968/130036215-49ef828e-bee8-4160-8536-3da2cac75a71.png)
+
+- viewPage MSA PolicyHandler 를 통해 구현 
+  ("RoomCreated" 이벤트 발생 시, Pub/Sub 기반으로 별도 테이블에 저장)
+
+  ![image](https://user-images.githubusercontent.com/45943968/130036716-7010815f-7d31-4201-8a02-dac1af5193ed.png)
+  ("RoomReservationReqeusted" 이벤트 발생 시, Pub/Sub 기반으로 별도 테이블에 저장)
+
+  ![image](https://user-images.githubusercontent.com/45943968/130036767-65e85e0b-503e-4fa8-b505-4b860eccd8ee.png)
+
+- 실제로 view 페이지를 조회해 보면 모든 room에 대한 정보, 예약 상태, 결제 상태 등의 정보를 종합적으로 알 수 있다.
+
+  ![image](https://user-images.githubusercontent.com/45943968/130037060-ff52d49c-733a-4dd5-a741-85416691ce50.png)
+
 ## DDD 의 적용
 
 - 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다: (예시는 pay 마이크로 서비스). 이때 가능한 현업에서 사용하는 언어 (유비쿼터스 랭귀지)를 그대로 사용하려고 노력했다. 하지만, 일부 구현에 있어서 영문이 아닌 경우는 실행이 불가능한 경우가 있기 때문에 계속 사용할 방법은 아닌것 같다. (Maven pom.xml, Kafka의 topic id, FeignClient 의 서비스 id 등은 한글로 식별자를 사용하는 경우 오류가 발생하는 것을 확인하였다)
