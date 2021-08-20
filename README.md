@@ -322,7 +322,6 @@
             ```               
 
       3. buildspec.yml 파일에 Service 설정 내용
-          - Service.yaml 예시
           
             ```
             apiVersion: v1
