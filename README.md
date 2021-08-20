@@ -208,22 +208,25 @@
 
 # 구현:
 
-분석/설계 단계에서 도출된 헥사고날 아키텍처에 따라, 각 BC별로 대변되는 마이크로 서비스들을 스프링부트와 파이선으로 구현하였다. 구현한 각 서비스를 로컬에서 실행하는 방법은 아래와 같다 (각자의 포트넘버는 8081 ~ 808n 이다)
+분석/설계 단계에서 도출된 헥사고날 아키텍처에 따라, 각 BC별로 대변되는 마이크로 서비스들을 스프링부트로 구현하였다. 구현한 각 서비스를 로컬에서 실행하는 방법은 아래와 같다 (각자의 포트넘버는 8081 ~ 808n 이다)
 
 ```
-cd app
-mvn spring-boot:run
-
-cd pay
-mvn spring-boot:run 
-
-cd store
-mvn spring-boot:run  
-
-cd customer
-python policy-handler.py 
+   cd customer
+   mvn spring-boot:run
+   
+   cd payment
+   mvn spring-boot:run
+   
+   cd hotel
+   mvn spring-boot:run
+   
+   cd viewPage
+   mvn spring-boot:run
+   
+   cd gateway
+   mvn spring-boot:run
+   
 ```
-
 
 ## CQRS
 
@@ -245,27 +248,171 @@ python policy-handler.py
 - 실제로 view 페이지를 조회해 보면 모든 room에 대한 정보, 예약 상태, 결제 상태 등의 정보를 종합적으로 알 수 있다.
 
   ![image](https://user-images.githubusercontent.com/45943968/130037060-ff52d49c-733a-4dd5-a741-85416691ce50.png)
+  
+## API 게이트웨이
+      1. gateway 스프링부트 App을 추가 후 application.yaml내에 각 마이크로 서비스의 routes 를 추가하고 gateway 서버의 포트를 8080 으로 설정함
+       
+          - application.yaml 예시
+            ```
+               spring:
+		  profiles: docker
+		  cloud:
+		    gateway:
+		      routes:
+			- id: customer
+			  uri: http://user04-customer:8080
+			  predicates:
+			    - Path=/reservations/** 
+			- id: payment
+			  uri: http://user04-payment:8080
+			  predicates:
+			    - Path=/payments/** 
+			- id: hotel
+			  uri: http://user04-hotel:8080
+			  predicates:
+			    - Path=/roomManagements/** 
+			- id: viewPage
+			  uri: http://user04-viewPage:8080
+			  predicates:
+			    - Path=/reservationStatusViews/**
+		      globalcors:
+			corsConfigurations:
+			  '[/**]':
+			    allowedOrigins:
+			      - "*"
+			    allowedMethods:
+			      - "*"
+			    allowedHeaders:
+			      - "*"
+			    allowCredentials: true
+
+		server:
+		  port: 8080
+            ```
+
+         
+      2. buildspec.yml 파일의 Deployment 설정 내용 
+          
+            ```
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: $_PROJECT_NAME
+            namespace: $_NAMESPACE
+            labels:
+              app: $_PROJECT_NAME
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: $_PROJECT_NAME
+            template:
+              metadata:
+                labels:
+                  app: $_PROJECT_NAME
+              spec:
+                containers:
+                  - name: $_PROJECT_NAME
+                    image: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$_PROJECT_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION
+                    ports:
+                      - containerPort: 8080
+            ```               
+
+          - Kubernetes에 생성된 Deploy. 확인
+            
+![image](https://user-images.githubusercontent.com/80744273/119321943-1d821200-bcb8-11eb-98d7-bf8def9ebf80.png)
+	    
+            
+      3. buildspec.yml 파일에 Service 설정하고 Gateway 엔드포인트를 확인함. 
+          - Service.yaml 예시
+          
+            ```
+            apiVersion: v1
+            kind: Service
+            metadata:
+              name: $_PROJECT_NAME
+              namespace: $_NAMESPACE
+              labels:
+                app: $_PROJECT_NAME
+            spec:
+              ports:
+                - port: 8080
+                  targetPort: 8080
+              selector:
+                app: $_PROJECT_NAME
+              type:
+                LoadBalancer   
+            ```             
+ 
+          - API Gateay 엔드포인트 확인
+           
+            ```
+            Service  및 엔드포인트 확인 
+            kubectl get service -n hotels      
+            ```                 
+![image](https://user-images.githubusercontent.com/80744273/119318358-2a046b80-bcb4-11eb-9d46-ef2d498c2cff.png)
+
+# Correlation
+
+hotel reservation 프로젝트에서는 PolicyHandler에서 처리 시 어떤 건에 대한 처리인지를 구별하기 위한 Correlation-key 구현을 
+이벤트 클래스 안의 변수로 전달받아 서비스간 연관된 처리를 정확하게 구현하고 있습니다. 
+
+아래의 구현 예제를 보면
+
+예약(Reservation)을 하면 동시에 연관된 방(Room), 결제(Payment) 등의 서비스의 상태가 적당하게 변경이 되고,
+예약건의 취소를 수행하면 다시 연관된 방(Room), 결제(Payment) 등의 서비스의 상태값 등의 데이터가 적당한 상태로 변경되는 것을
+확인할 수 있습니다.
+
+예약등록
+http POST http://localhost:8088/reservations customerId=1 roomId=2 roomName=“101호” customerName=“정지은” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
+
+예약 후 - 예약 상태
+http http://localhost:8088/reservations
+
+예약 후 - 결제 상태
+http http://localhost:8088/payments
+
+예약 취소
+http PATCH http://localhost:8088/reservations/2 reservationStatus="RSV_CANCELED"
+
+취소 후 - 예약 상태
+http http://localhost:8088/reservations
+
+취소 후 - 결제 상태
+http http://localhost:8088/payments
+
 
 ## DDD 의 적용
 
-- 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다: (예시는 pay 마이크로 서비스). 이때 가능한 현업에서 사용하는 언어 (유비쿼터스 랭귀지)를 그대로 사용하려고 노력했다. 하지만, 일부 구현에 있어서 영문이 아닌 경우는 실행이 불가능한 경우가 있기 때문에 계속 사용할 방법은 아닌것 같다. (Maven pom.xml, Kafka의 topic id, FeignClient 의 서비스 id 등은 한글로 식별자를 사용하는 경우 오류가 발생하는 것을 확인하였다)
+- 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다. (예시는 Reservation 마이크로 서비스). 이때 가능한 현업에서 사용하는 언어 (유비쿼터스 랭귀지)를 그대로 사용하려고 노력했다. 현실에서 발생가는한 이벤트에 의하여 마이크로 서비스들이 상호 작용하기 좋은 모델링으로 구현을 하였다.
 
 ```
-package fooddelivery;
+package project;
 
 import javax.persistence.*;
 import org.springframework.beans.BeanUtils;
 import java.util.List;
+import java.util.Date;
 
 @Entity
-@Table(name="결제이력_table")
-public class 결제이력 {
+@Table(name="Reservation_table")
+public class Reservation {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private Long id;
-    private String orderId;
-    private Double 금액;
+    private Long id; 
+    private Long customerId;  // 고객 ID
+    private Long roomId; // 객실 ID
+    private String roomName; // 객실 이름
+    private String customerName; // 고객 이름 
+    private String reservationStatus; // 예약상태 (status: "RSV_REQUESTED", "RSV_APPROVED", "RSV_CANCELED", "RSV_REJECTED") 
+    private Long hotelId; // 호텔 ID
+    private String hotelName; // 호텔 이름
+    private Date checkInDate; // 체크인 날짜
+    private Date checkOutDate; // 체크아웃 날짜
+    private Long roomPrice; // 객실 가격
+    private String paymentStatus;  //결제상태 (status: "PAY_REQUESTED", "PAY_FINISHED", "PAY_CANCELED" )
+
 
     public Long getId() {
         return id;
@@ -274,148 +421,175 @@ public class 결제이력 {
     public void setId(Long id) {
         this.id = id;
     }
-    public String getOrderId() {
-        return orderId;
+    public Long getCustomerId() {
+        return customerId;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
-    public Double get금액() {
-        return 금액;
-    }
-
-    public void set금액(Double 금액) {
-        this.금액 = 금액;
+    public Long getRoomId() {
+        return roomId;
     }
 
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
+    }
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+    public String getReservationStatus() {
+        return reservationStatus;
+    }
+
+    public void setReservationStatus(String reservationStatus) {
+        this.reservationStatus = reservationStatus;
+    }
+    public Long getHotelId() {
+        return hotelId;
+    }
+
+    public void setHotelId(Long hotelId) {
+        this.hotelId = hotelId;
+    }
+    public String getHotelName() {
+        return hotelName;
+    }
+
+    public void setHotelName(String hotelName) {
+        this.hotelName = hotelName;
+    }
+    public Date getCheckInDate() {
+        return checkInDate;
+    }
+
+    public void setCheckInDate(Date checkInDate) {
+        this.checkInDate = checkInDate;
+    }
+    public Date getCheckOutDate() {
+        return checkOutDate;
+    }
+
+    public void setCheckOutDate(Date checkOutDate) {
+        this.checkOutDate = checkOutDate;
+    }
+    public Long getRoomPrice() {
+        return roomPrice;
+    }
+
+    public void setRoomPrice(Long roomPrice) {
+        this.roomPrice = roomPrice;
+    }
+
+    public String getPaymentStatus() {
+        return this.paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public String getRoomName() {
+        return this.roomName;
+    }
+
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
+    }
 }
 
 ```
 - Entity Pattern 과 Repository Pattern 을 적용하여 JPA 를 통하여 다양한 데이터소스 유형 (RDB or NoSQL) 에 대한 별도의 처리가 없도록 데이터 접근 어댑터를 자동 생성하기 위하여 Spring Data REST 의 RestRepository 를 적용하였다
 ```
-package fooddelivery;
+package project;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-public interface 결제이력Repository extends PagingAndSortingRepository<결제이력, Long>{
+@RepositoryRestResource(collectionResourceRel="reservations", path="reservations")
+public interface ReservationRepository extends PagingAndSortingRepository<Reservation, Long>{
+
 }
+
 ```
 - 적용 후 REST API 의 테스트
 ```
-# app 서비스의 주문처리
-http localhost:8081/orders item="통닭"
+# hotel 서비스의 room 등록
+http POST http://localhost:8088/roomManagements roomId=2 roomName="101호" roomStatus="ROOM_CREATED" roomPrice=1000 hotelId=1 hotelName="신라"
 
-# store 서비스의 배달처리
-http localhost:8083/주문처리s orderId=1
+# customer 서비스의 예약 요청
+http POST http://localhost:8088/reservations customerId=1 roomId=2 roomName=“101호” customerName=“정지은” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
 
-# 주문 상태 확인
-http localhost:8081/orders/1
-
-```
-
-
-## 폴리글랏 퍼시스턴스
-
-앱프런트 (app) 는 서비스 특성상 많은 사용자의 유입과 상품 정보의 다양한 콘텐츠를 저장해야 하는 특징으로 인해 RDB 보다는 Document DB / NoSQL 계열의 데이터베이스인 Mongo DB 를 사용하기로 하였다. 이를 위해 order 의 선언에는 @Entity 가 아닌 @Document 로 마킹되었으며, 별다른 작업없이 기존의 Entity Pattern 과 Repository Pattern 적용과 데이터베이스 제품의 설정 (application.yml) 만으로 MongoDB 에 부착시켰다
+# customer 서비스의 예약 상태 확인
+http GET http://localhost:8088/reservations
 
 ```
-# Order.java
 
-package fooddelivery;
+## 동기식 호출(Sync) 과 Fallback 처리
 
-@Document
-public class Order {
+분석단계에서의 조건 중 하나로 예약(customer)->결제(payment) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리하기로 하였다. 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어있는 REST 서비스를 FeignClient로 이용하여 호출하도록 한다.
 
-    private String id; // mongo db 적용시엔 id 는 고정값으로 key가 자동 발급되는 필드기 때문에 @Id 나 @GeneratedValue 를 주지 않아도 된다.
-    private String item;
-    private Integer 수량;
+- 결제 서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현 
+
+```
+# PaymentService.java
+
+package project.external;
+
+<!--import 문 생략 -->
+
+@FeignClient(name="Payment", url="${prop.room.url}")
+public interface PaymentService {
+    @RequestMapping(method= RequestMethod.POST, path="/payments")
+    public void requestPayment(@RequestBody Payment payment);
 
 }
 
-
-# 주문Repository.java
-package fooddelivery;
-
-public interface 주문Repository extends JpaRepository<Order, UUID>{
-}
-
-# application.yml
-
-  data:
-    mongodb:
-      host: mongodb.default.svc.cluster.local
-    database: mongo-example
-
 ```
 
-## 폴리글랏 프로그래밍
-
-고객관리 서비스(customer)의 시나리오인 주문상태, 배달상태 변경에 따라 고객에게 카톡메시지 보내는 기능의 구현 파트는 해당 팀이 python 을 이용하여 구현하기로 하였다. 해당 파이썬 구현체는 각 이벤트를 수신하여 처리하는 Kafka consumer 로 구현되었고 코드는 다음과 같다:
+- 예약 요청을 받은 직후(@PostPersist) 가능상태 확인 및 결제를 동기(Sync)로 요청하도록 처리
 ```
-from flask import Flask
-from redis import Redis, RedisError
-from kafka import KafkaConsumer
-import os
-import socket
+# Reservation.java (Entity)
 
-
-# To consume latest messages and auto-commit offsets
-consumer = KafkaConsumer('fooddelivery',
-                         group_id='',
-                         bootstrap_servers=['localhost:9092'])
-for message in consumer:
-    print ("%s:%d:%d: key=%s value=%s" % (message.topic, message.partition,
-                                          message.offset, message.key,
-                                          message.value))
-
-    # 카톡호출 API
-```
-
-파이선 애플리케이션을 컴파일하고 실행하기 위한 도커파일은 아래와 같다 (운영단계에서 할일인가? 아니다 여기 까지가 개발자가 할일이다. Immutable Image):
-```
-FROM python:2.7-slim
-WORKDIR /app
-ADD . /app
-RUN pip install --trusted-host pypi.python.org -r requirements.txt
-ENV NAME World
-EXPOSE 8090
-CMD ["python", "policy-handler.py"]
-```
-
-
-## 동기식 호출 과 Fallback 처리
-
-분석단계에서의 조건 중 하나로 주문(app)->결제(pay) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리하기로 하였다. 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어있는 REST 서비스를 FeignClient 를 이용하여 호출하도록 한다. 
-
-- 결제서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현 
-
-```
-# (app) 결제이력Service.java
-
-package fooddelivery.external;
-
-@FeignClient(name="pay", url="http://localhost:8082")//, fallback = 결제이력ServiceFallback.class)
-public interface 결제이력Service {
-
-    @RequestMapping(method= RequestMethod.POST, path="/결제이력s")
-    public void 결제(@RequestBody 결제이력 pay);
-
-}
-```
-
-- 주문을 받은 직후(@PostPersist) 결제를 요청하도록 처리
-```
-# Order.java (Entity)
-
-    @PostPersist
+     @PostPersist
     public void onPostPersist(){
+        System.out.println("*****객실 예약이 요청됨*****");
 
-        fooddelivery.external.결제이력 pay = new fooddelivery.external.결제이력();
-        pay.setOrderId(getOrderId());
+        /* 객실 예약이 요청됨 */
+
+        // mappings goes here
+        /* 결제(payment) 동기 호출 진행 */
+        /* 결제 진행 가능 여부 확인 후 결제 */
+        project.external.Payment payment = new project.external.Payment();
+        if(this.getReservationStatus().equals("RSV_REQUESTED") && this.getPaymentStatus().equals("PAY_REQUESTED")){
+
+            payment.setReservationId(this.getId());
+            payment.setCustomerId(this.getCustomerId());
+            payment.setRoomId(this.getRoomId());
+            payment.setRoomName(this.getRoomName());
+            payment.setRoomPrice(this.getRoomPrice());
+            payment.setCustomerName(this.getCustomerName());
+            payment.setHotelId(this.getHotelId());
+            payment.setHotelName(this.getHotelName());
+            payment.setCheckInDate(this.getCheckInDate());
+            payment.setCheckOutDate(this.getCheckOutDate());
+            payment.setReservationStatus("RSV_REQUESTED");
+            payment.setPaymentStatus("PAY_FINISHED");
+        }
         
-        Application.applicationContext.getBean(fooddelivery.external.결제이력Service.class)
-                .결제(pay);
+         CustomerApplication.applicationContext.getBean(project.external.PaymentService.class)
+            .requestPayment(payment);
+
+        //Following code causes dependency to external APIs
+        // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
+        RoomReservationReqeusted roomReservationReqeusted = new RoomReservationReqeusted();
+        BeanUtils.copyProperties(this, roomReservationReqeusted);
+        roomReservationReqeusted.publishAfterCommit();
+
     }
 ```
 
@@ -423,110 +597,151 @@ public interface 결제이력Service {
 
 
 ```
-# 결제 (pay) 서비스를 잠시 내려놓음 (ctrl+c)
+# 결제 (payment) 서비스를 잠시 내려놓음 (ctrl+c)
 
-#주문처리
-http localhost:8081/orders item=통닭 storeId=1   #Fail
-http localhost:8081/orders item=피자 storeId=2   #Fail
+# 예약 요청 #Fail
+http POST http://localhost:8088/reservations customerId=1 roomId=2 roomName=“101호” customerName=“정지은” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED" 
 
-#결제서비스 재기동
-cd 결제
+# 결제서비스 재기동
+cd payment
 mvn spring-boot:run
 
-#주문처리
-http localhost:8081/orders item=통닭 storeId=1   #Success
-http localhost:8081/orders item=피자 storeId=2   #Success
+# 예약 요청  #Success
+http POST http://localhost:8088/reservations customerId=1 roomId=2 roomName=“101호” customerName=“정지은” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED" 
 ```
 
-- 또한 과도한 요청시에 서비스 장애가 도미노 처럼 벌어질 수 있다. (서킷브레이커, 폴백 처리는 운영단계에서 설명한다.)
-
+- 또한 과도한 요청시에 서비스 장애가 도미노 처럼 벌어질 수 있다. (서킷브레이커 처리는 운영단계에서 설명한다.)
 
 
 
 ## 비동기식 호출 / 시간적 디커플링 / 장애격리 / 최종 (Eventual) 일관성 테스트
 
 
-결제가 이루어진 후에 상점시스템으로 이를 알려주는 행위는 동기식이 아니라 비 동기식으로 처리하여 상점 시스템의 처리를 위하여 결제주문이 블로킹 되지 않아도록 처리한다.
- 
-- 이를 위하여 결제이력에 기록을 남긴 후에 곧바로 결제승인이 되었다는 도메인 이벤트를 카프카로 송출한다(Publish)
+결제가 이루어진 후에 호텔 시스템의 상태가 업데이트 되고, 예약 시스템의 상태가 업데이트 되며 비동기식으로 호출된다.
+
+- 이를 위하여 결제가 승인되면 결제가 승인 되었다는 이벤트를 카프카로 송출한다. (Publish)
  
 ```
-package fooddelivery;
+# Payment.java
+
+package project;
+
+import javax.persistence.*;
+import org.springframework.beans.BeanUtils;
+import java.util.List;
+import java.util.Date;
 
 @Entity
-@Table(name="결제이력_table")
-public class 결제이력 {
+@Table(name="Payment_table")
+public class Payment {
 
- ...
-    @PrePersist
-    public void onPrePersist(){
-        결제승인됨 결제승인됨 = new 결제승인됨();
-        BeanUtils.copyProperties(this, 결제승인됨);
-        결제승인됨.publish();
+    ....
+   @PostPersist
+    public void onPostPersist(){
+
+        /* 결제 승인 이벤트 */
+        PaymentFinished paymentFinished = new PaymentFinished();
+        BeanUtils.copyProperties(this, paymentFinished);
+        paymentFinished.publishAfterCommit();
     }
-
+    ....
 }
 ```
-- 상점 서비스에서는 결제승인 이벤트에 대해서 이를 수신하여 자신의 정책을 처리하도록 PolicyHandler 를 구현한다:
+
+- 예약 시스템에서는 결제 승인 이벤트에 대해서 이를 수신하여 자신의 정책을 처리하도록 PolicyHandler 를 구현한다:
 
 ```
-package fooddelivery;
+# PolicyHandler.java
 
-...
+package project;
 
 @Service
 public class PolicyHandler{
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void whenever결제승인됨_주문정보받음(@Payload 결제승인됨 결제승인됨){
+    public void wheneverPaymentFinished_UpdateReservationInfo(@Payload PaymentFinished paymentFinished){
+        /* 결제 완료 (PAY_FINISHED) */
+        /* 결제가 완료되면 객실 상태(paymentStatus)를 변경 */
+ 
+        if(!paymentFinished.validate()) return;
 
-        if(결제승인됨.isMe()){
-            System.out.println("##### listener 주문정보받음 : " + 결제승인됨.toJson());
-            // 주문 정보를 받았으니, 요리를 슬슬 시작해야지..
-            
-        }
+        System.out.println("\n\n##### listener UpdateReservationInfo : " + paymentFinished.toJson() + "\n\n");
+
+        saveChangedStatus(paymentFinished.getReservationId(), "", "PAY_FINISHED");
+
     }
+```
+
+그 외 예약 승인/거부는 예약/결제와 완전히 분리되어있으며, 이벤트 수신에 따라 처리되기 때문에, 유지보수로 인해 잠시 내려간 상태 라도 예약을 받는데 문제가 없다.
+
+```
+# 호텔 서비스 (hotel) 를 잠시 내려놓음 (ctrl+c)
+
+# 예약 요청  #Success
+http POST http://localhost:8088/reservations customerId=1 roomId=3 roomName=“103호” customerName=“정지은” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"  
+
+# 예약 상태 확인
+http http://localhost:8088/reservations   # hotel 서비스와 상관없이 예약 상태는 정상 확인
+
+```
+
+## 폴리글랏 퍼시스턴스
+
+viewPage 는 RDB 계열의 데이터베이스인 Maria DB 를 사용하기로 하였다. 
+별다른 작업없이 기존의 Entity Pattern 과 Repository Pattern 적용과 데이터베이스 관련 설정 (pom.xml, application.yml) 만으로 Maria DB 에 부착시켰다.
+
+```
+# ReservationStatusView.java
+
+package project;
+
+import javax.persistence.*;
+import java.util.List;
+import java.util.Date;
+
+@Entity
+@Table(name="ReservationStatusView_table")
+public class ReservationStatusView {
 
 }
 
+# ReservationStatusViewRepository.java
+package project;
+
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+
+public interface ReservationStatusViewRepository extends CrudRepository<ReservationStatusView, Long> {
+    ReservationStatusView findByReservationId(Long reservationId);
+    ReservationStatusView findByRoomId(Long roomId);
+    
+}
+
+# pom.xml
+
+	<dependency>
+		<groupId>org.mariadb.jdbc</groupId>
+		<artifactId>mariadb-java-client</artifactId>
+		<scope>runtime</scope>
+	</dependency>
+		
+
+# application.yml
+
+  datasource:
+    url: jdbc:mariadb://localhost:3306/test
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: ####   (계정정보 숨김처리)
+    password: ####   (계정정보 숨김처리)
+
 ```
-실제 구현을 하자면, 카톡 등으로 점주는 노티를 받고, 요리를 마친후, 주문 상태를 UI에 입력할테니, 우선 주문정보를 DB에 받아놓은 후, 이후 처리는 해당 Aggregate 내에서 하면 되겠다.:
-  
-```
-  @Autowired 주문관리Repository 주문관리Repository;
-  
-  @StreamListener(KafkaProcessor.INPUT)
-  public void whenever결제승인됨_주문정보받음(@Payload 결제승인됨 결제승인됨){
 
-      if(결제승인됨.isMe()){
-          카톡전송(" 주문이 왔어요! : " + 결제승인됨.toString(), 주문.getStoreId());
+실제 MariaDB 접속하여 확인 시, 데이터 확인 가능 (ex. Customer에서 객실 예약 요청한 경우)
+- http POST http://localhost:8088/reservations customerId=1 roomId=1 roomName=“101호” customerName=“soyeon” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
 
-          주문관리 주문 = new 주문관리();
-          주문.setId(결제승인됨.getOrderId());
-          주문관리Repository.save(주문);
-      }
-  }
-
-```
-
-상점 시스템은 주문/결제와 완전히 분리되어있으며, 이벤트 수신에 따라 처리되기 때문에, 상점시스템이 유지보수로 인해 잠시 내려간 상태라도 주문을 받는데 문제가 없다:
-```
-# 상점 서비스 (store) 를 잠시 내려놓음 (ctrl+c)
-
-#주문처리
-http localhost:8081/orders item=통닭 storeId=1   #Success
-http localhost:8081/orders item=피자 storeId=2   #Success
-
-#주문상태 확인
-http localhost:8080/orders     # 주문상태 안바뀜 확인
-
-#상점 서비스 기동
-cd 상점
-mvn spring-boot:run
-
-#주문상태 확인
-http localhost:8080/orders     # 모든 주문의 상태가 "배송됨"으로 확인
-```
+![image](https://user-images.githubusercontent.com/45943968/130158245-2d242319-ab00-4224-9c88-93f4a90b7311.png)
 
 
 # 운영
