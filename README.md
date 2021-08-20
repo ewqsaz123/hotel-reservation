@@ -588,14 +588,15 @@ public interface PaymentService {
 # 결제 (payment) 서비스를 잠시 내려놓음 (ctrl+c)
 
 # 예약 요청  - Fail
-http POST http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/reservations customerId=1 roomId=10 roomName=“110호” customerName=“soyeon” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
+http POST http://localhost:8088/reservations customerId=1 roomId=10 roomName=“110호” customerName=“soyeon” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
 
 # 결제서비스 재기동
 cd payment
 mvn spring-boot:run
 
 # 예약 요청  - Success
-http POST http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/reservations customerId=1 roomId=10 roomName=“110호” customerName=“soyeon” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
+http POST http://localhost:8088/reservations customerId=1 roomId=10 roomName=“110호” customerName=“soyeon” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
+
 ```
 
 - 또한 과도한 요청시에 서비스 장애가 도미노 처럼 벌어질 수 있다. (서킷브레이커 처리는 운영단계에서 설명한다.)
@@ -664,10 +665,11 @@ public class PolicyHandler{
 # 호텔 서비스 (hotel) 를 잠시 내려놓음 (ctrl+c)
 
 # 예약 요청  - Success
-http POST http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/reservations customerId=1 roomId=10 roomName=“110호” customerName=“soyeon” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"     
+http POST http://localhost:8088/reservations customerId=1 roomId=10 roomName=“110호” customerName=“soyeon” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
+   
 
 # 예약 상태 확인  - hotel 서비스와 상관없이 예약 상태는 정상 확인
-http GET http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/reservations   
+http GET http://localhost:8088/reservations
 ```
 
 
