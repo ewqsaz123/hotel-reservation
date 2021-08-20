@@ -886,6 +886,8 @@ siege -c100 -t10S -v --content-type "application/json" 'http://user04-customer:8
                       failureThreshold: 10
 ```
 
+Customer 서비스 신규 버전으로 배포
+
 ![readiness](https://user-images.githubusercontent.com/87056402/130174091-65759533-049d-4fca-aeca-3c2a52d61925.png)
 
 배포기간 동안 Availability 가 변화없기 때문에 무정지 재배포가 성공한 것으로 확인됨.
