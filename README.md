@@ -820,15 +820,27 @@ siege -c10 -t10s -v http://user04-gateway:8080/payments
 
 ```
 ![cb2](https://user-images.githubusercontent.com/87056402/130167142-290b8c51-3f08-4d84-91d0-878af3818059.png)
+CB가 없기 때문에 100% 성공
+
+```
+kubectl apply -f destinationRule -n hotels
+
+kind: DestinationRule
+metadata:
+  name: dr-payment
+spec:
+  host: user04-payment
+  trafficPolicy:
+    connectionPool:
+      http:
+        http1MaxPendingRequests: 1
+        maxRequestsPerConnection: 1
+```
+
 
 ![cb3](https://user-images.githubusercontent.com/87056402/130168542-681767c3-970f-4a86-a2b9-4599abbb14cd.png)
+CB적용 되어 일부 실패 확인
 
-
-
-- 운영시스템은 죽지 않고 지속적으로 CB 에 의하여 적절히 회로가 열림과 닫힘이 벌어지면서 자원을 보호하고 있음을 보여줌. 하지만, 63.55% 가 성공하였고, 46%가 실패했다는 것은 고객 사용성에 있어 좋지 않기 때문에 Retry 설정과 동적 Scale out (replica의 자동적 추가,HPA) 을 통하여 시스템을 확장 해주는 후속처리가 필요.
-
-- Retry 의 설정 (istio)
-- Availability 가 높아진 것을 확인 (siege)
 
 ### 오토스케일 아웃
 앞서 CB 는 시스템을 안정되게 운영할 수 있게 해줬지만 사용자의 요청을 100% 받아들여주지 못했기 때문에 이에 대한 보완책으로 자동화된 확장 기능을 적용하고자 한다. 
