@@ -770,7 +770,6 @@ EKS에 배포된 내용
 
  kubectl apply -f configmap
 
---파일내용
 ```
  apiVersion: v1
  kind: ConfigMap
