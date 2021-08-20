@@ -318,12 +318,7 @@
                       - containerPort: 8080
             ```               
 
-          - Kubernetes에 생성된 Deploy. 확인
-            
-![image](https://user-images.githubusercontent.com/80744273/119321943-1d821200-bcb8-11eb-98d7-bf8def9ebf80.png)
-	    
-            
-      3. buildspec.yml 파일에 Service 설정하고 Gateway 엔드포인트를 확인함. 
+      3. buildspec.yml 파일에 Service 설정 내용
           - Service.yaml 예시
           
             ```
@@ -344,13 +339,10 @@
                 LoadBalancer   
             ```             
  
-          - API Gateay 엔드포인트 확인
-           
-            ```
-            Service  및 엔드포인트 확인 
-            kubectl get service -n hotels      
-            ```                 
-![image](https://user-images.githubusercontent.com/80744273/119318358-2a046b80-bcb4-11eb-9d46-ef2d498c2cff.png)
+       4. 적용된 deploy, service 확인 및 API Gateay 엔드포인트 확인
+                    
+![eks](https://user-images.githubusercontent.com/87056402/130163825-92ffa0ae-26b2-4c79-b562-680c892fcdd9.png)
+
 
 # Correlation
 
