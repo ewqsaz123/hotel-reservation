@@ -250,8 +250,9 @@
   ![image](https://user-images.githubusercontent.com/45943968/130037060-ff52d49c-733a-4dd5-a741-85416691ce50.png)
   
 ## API 게이트웨이
-      1. gateway 스프링부트 App을 추가 후 application.yaml내에 각 마이크로 서비스의 routes 를 추가하고 gateway 서버의 포트를 8080 으로 설정함
-       
+
+gateway 스프링부트 App을 추가 후 application.yaml내에 각 마이크로 서비스의 routes 를 추가하고 gateway 서버의 포트를 8080 으로 설정함
+    
           - application.yaml 예시
             ```
                spring:
@@ -339,7 +340,6 @@
                 LoadBalancer   
             ```             
  
-
 적용된 Deploy, Service 및 API Gateway 엔드포인트 확인
 
 ![image](https://user-images.githubusercontent.com/45943968/130165112-93587d48-d563-46f5-a432-a73ff951a530.png)
