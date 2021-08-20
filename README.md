@@ -339,10 +339,10 @@
                 LoadBalancer   
             ```             
  
-       4. 적용된 deploy, service 확인 및 API Gateay 엔드포인트 확인
-                    
-![eks](https://user-images.githubusercontent.com/87056402/130163825-92ffa0ae-26b2-4c79-b562-680c892fcdd9.png)
 
+적용된 Deploy, Service 및 API Gateway 엔드포인트 확인
+
+![image](https://user-images.githubusercontent.com/45943968/130165112-93587d48-d563-46f5-a432-a73ff951a530.png)
 
 # Correlation
 
