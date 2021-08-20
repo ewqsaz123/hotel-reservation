@@ -104,6 +104,9 @@ phases:
                       httpGet:
                         path: /actuator/health
                         port: 8080
+                      command:
+                        - cat
+                        - /tmp/healthy
                       initialDelaySeconds: 120
                       timeoutSeconds: 2
                       periodSeconds: 5
