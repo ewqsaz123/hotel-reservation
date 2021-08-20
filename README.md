@@ -537,7 +537,7 @@ EKS에 배포된 내용
    name: hotel-configmap
    namespace: hotels
  data:
-   apiurl: "http://gateway:8080"
+   apiurl: "http://user04-gateway:8080"
 
 
 buildspec 수정
