@@ -862,7 +862,6 @@ kubectl autoscale deploy user04-payment --min=1 --max=10 --cpu-percent=15 -n hot
 ```
 siege -c10 -t10s -v http://user04-gateway:8080/payments 
 ```
-- 
 - 어느정도 시간이 흐른 후 (약 30초) 스케일 아웃이 벌어지는 것을 확인할 수 있다:
 
 ![hpa1](https://user-images.githubusercontent.com/87056402/130169194-50946c9e-8c49-4078-8c52-ad6b056f98b2.png)
