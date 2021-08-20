@@ -24,7 +24,7 @@
     - [동기식 호출 / 서킷 브레이킹 / 장애격리](#동기식-호출-서킷-브레이킹-장애격리)
     - [오토스케일 아웃](#오토스케일-아웃)
     - [무정지 재배포](#무정지-재배포)
-    - [Self healing](#Self-Healing(Liveness Probe))
+    - [Self healing](#Liveness-Probe)
 
 
 # 서비스 시나리오
