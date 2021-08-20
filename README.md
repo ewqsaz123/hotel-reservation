@@ -24,7 +24,7 @@
     - [동기식 호출 / 서킷 브레이킹 / 장애격리](#동기식-호출-서킷-브레이킹-장애격리)
     - [오토스케일 아웃](#오토스케일-아웃)
     - [무정지 재배포](#무정지-재배포)
-  - [신규 개발 조직의 추가](#신규-개발-조직의-추가)
+
 
 # 서비스 시나리오
 
@@ -32,7 +32,7 @@
 
 기능적 요구사항
 1. 호텔 매니저가 룸을 생성할 수 있다.
-2. 고객이 객실을 선택하여 예약한다. 예약시 결제가 된다.
+2. 고객이 객실을 선택하고 예약요청과 함께 결재가 진행된다. 
 3. 예약이 되면 내역이 호텔 매니저에게 전달된다
 4. 호텔 매니저가 예약을 최종 승인/거절 한다
 5. 호텔 매니저가 거절하면 예약이 취소된다.(결제도 취소)
@@ -137,7 +137,7 @@
 
 ### 바운디드 컨텍스트로 묶기
 
-![분석설계4](https://user-images.githubusercontent.com/27762942/130018794-ad7af78d-3e79-410f-9928-43fb2af6beee.png)
+![분석설계4_new](https://user-images.githubusercontent.com/27762942/130165881-9bba6413-01c1-4d66-9501-c6093341e5f2.png)
 
     - 도메인 서열 분리 
         - Core Domain:  CustomerApp(front), RoomManagement : 없어서는 안될 핵심 서비스이며, 연견 Up-time SLA 수준을 99.999% 목표, 배포주기는 app 의 경우 1주일 1회 미만, store 의 경우 1개월 1회 미만
@@ -146,17 +146,17 @@
 
 ### 컨텍스트 매핑 (점선은 Pub/Sub, 실선은 Req/Resp)
 
-![분석설계5](https://user-images.githubusercontent.com/27762942/130018795-18c9e36d-499b-4242-b742-593064eae401.png)
+![분석설계5_new](https://user-images.githubusercontent.com/27762942/130165882-245429c0-a357-4e89-b311-5648d3b0b8ef.png)
 
 ### 완성된 1차 모형
 
-![분석설계6](https://user-images.githubusercontent.com/27762942/130018799-a3f6f280-8e10-460a-b4b6-344e0248874b.png)
+![분석설계6_new](https://user-images.githubusercontent.com/27762942/130165883-b6ca8706-8189-4c9e-a529-1f4291eef6de.png)
 
     - View Model 추가
 
 ### 1차 완성본에 대한 기능적/비기능적 요구사항을 커버하는지 검증
 
-![분석설계_검증1](https://user-images.githubusercontent.com/27762942/130023505-7a7635bc-b676-4966-af6b-4942f4e07edd.png)
+![분석설계_검증1_new](https://user-images.githubusercontent.com/27762942/130165874-82236181-5366-479f-83a6-b511073390a9.png)
 
     - 고객이 호텔/Room/날짜를 선택하여 예약한다 (ok)
     - 고객이 결제한다 (ok)
@@ -165,12 +165,12 @@
     - 호텔관리자는 중간중간 예약 현황을 조회한다 (View-green sticker 의 추가로 ok) 
     
 
-![분석설계_검증2](https://user-images.githubusercontent.com/27762942/130018802-14992b35-43ad-405b-a4f7-60a4eb56eedd.png)
+![분석설계_검증2_new](https://user-images.githubusercontent.com/27762942/130165878-e9c21803-e7a1-4709-aacd-3809144069e5.png)
   
     - 고객이 예약을 취소할 수 있다 (ok)
     - 예약이 취소되면 Room예약 상태가 변경되고 결재가 취소된다 (ok)    
     
-![분석설계_검증3](https://user-images.githubusercontent.com/27762942/130018783-77b4184d-5cb8-4f5f-a3af-a39cd9f7c4ca.png)
+![분석설계_검증3_new](https://user-images.githubusercontent.com/27762942/130165879-b745209e-8a70-482e-9e63-1d1830f848d3.png)
     
     - 호텔관리자가 Room상태를 예약가능 처리 할 수 있다 (ok)
     - 호텔관리자가 예약요청을 거절 할 수 있다 (ok)
@@ -180,25 +180,27 @@
 
 ### 모델 수정
 
-![분석설계6](https://user-images.githubusercontent.com/27762942/130018799-a3f6f280-8e10-460a-b4b6-344e0248874b.png)
+![분석설계6_new](https://user-images.githubusercontent.com/27762942/130165883-b6ca8706-8189-4c9e-a529-1f4291eef6de.png)
     
     - 수정된 모델은 모든 요구사항을 커버함.
 
 ### 비기능 요구사항에 대한 검증
 
-![분석설계6](https://user-images.githubusercontent.com/27762942/130018799-a3f6f280-8e10-460a-b4b6-344e0248874b.png)
+![분석설계6_new](https://user-images.githubusercontent.com/27762942/130165883-b6ca8706-8189-4c9e-a529-1f4291eef6de.png)
 
     - 마이크로 서비스를 넘나드는 시나리오에 대한 트랜잭션 처리
         - 예약 요청 시 결제처리:  결제가 완료되지 않은 예약은 절대 받지 않는다는 정책에 따라, ACID 트랜잭션 적용. 예약요청시 결제처리에 대해서는 Request-Response 방식 처리
         - 결제 완료시 호텔관리자연결 및 최종 예약 완료 및 Room 상태 변경 처리:  CustomerApp(front) 에서 RoomManagement 마이크로서비스로 주문요청이 전달되는 과정에 있어서 RoomManagement 마이크로 서비스가 별도의 배포주기를 가지기 때문에 Eventual Consistency 방식으로 트랜잭션 처리함.
         - 나머지 모든 inter-microservice 트랜잭션: 예약상태, Room상태 등 모든 이벤트에 대해 ReservationStatusView 처리 등, 데이터 일관성의 시점이 크리티컬하지 않은 모든 경우가 대부분이라 판단, Eventual Consistency 를 기본으로 채택함.
+	- 호텔 관리 기능이 수행되지 않더라도 예약 주문은 365일 24시간 받을 수 있어야 한다  Async (event-driven), Eventual Consistency
+        - 결제시스템이 과중되면 사용자를 잠시동안 받지 않고 결제를 잠시후에 하도록 유도한다  Circuit breaker, fallback
 
 
 
 
 ## 헥사고날 아키텍처 다이어그램 도출
     
-![헥사고날](https://user-images.githubusercontent.com/27762942/130027071-bbb430a8-611c-47a3-8a81-9241770cade8.png)
+![헥사고날_new](https://user-images.githubusercontent.com/27762942/130165884-187c7007-b1e7-4729-a47b-c2f8880f74ce.png)
 
 
     - Chris Richardson, MSA Patterns 참고하여 Inbound adaptor와 Outbound adaptor를 구분함
@@ -250,10 +252,10 @@
   ![image](https://user-images.githubusercontent.com/45943968/130037060-ff52d49c-733a-4dd5-a741-85416691ce50.png)
   
 ## API 게이트웨이
+
+gateway 스프링부트 App을 추가 후 application.yaml내에 각 마이크로 서비스의 routes 를 추가하고 gateway 서버의 포트를 8080 으로 설정함
     
-      1. gateway 스프링부트 App을 추가 후 application.yaml내에 각 마이크로 서비스의 routes 를 추가하고 gateway 서버의 포트를 8080 으로 설정함
-	
-	  - application.yaml
+          - application.yaml 예시
             ```
                spring:
 		  profiles: docker
@@ -511,20 +513,19 @@ public interface ReservationRepository extends PagingAndSortingRepository<Reserv
 - 적용 후 REST API 의 테스트
 ```
 # hotel 서비스의 room 등록
-http POST http://a5ebfcb08c1a041548eacabecb9fa781-1794244842.ap-northeast-2.elb.amazonaws.com:8080/roomManagements roomId=10 roomName="110호" roomStatus="ROOM_CREATED" roomPrice=1000 hotelId=1 hotelName="신라"
+http POST http://localhost:8088/roomManagements roomId=2 roomName="101호" roomStatus="ROOM_CREATED" roomPrice=1000 hotelId=1 hotelName="신라"
 
 # customer 서비스의 예약 요청
-http POST http://a5ebfcb08c1a041548eacabecb9fa781-1794244842.ap-northeast-2.elb.amazonaws.com:8080/reservations customerId=1 roomId=10 roomName=“110호” customerName=“soyeon” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
+http POST http://localhost:8088/reservations customerId=1 roomId=2 roomName=“101호” customerName=“정지은” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
 
 # customer 서비스의 예약 상태 확인
-http GET http://a5ebfcb08c1a041548eacabecb9fa781-1794244842.ap-northeast-2.elb.amazonaws.com:8080/reservations
+http GET http://localhost:8088/reservations
 
 ```
 
-## 동기식 호출(Sync) - Request/Response
+## 동기식 호출(Sync) 과 Fallback 처리
 
-분석단계에서의 조건 중 하나로 예약(customer)->결제(payment) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리하기로 하였다. 
-호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어있는 REST 서비스를 FeignClient로 이용하여 호출하도록 한다.
+분석단계에서의 조건 중 하나로 예약(customer)->결제(payment) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리하기로 하였다. 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어있는 REST 서비스를 FeignClient로 이용하여 호출하도록 한다.
 
 - 결제 서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현 
 
@@ -577,6 +578,12 @@ public interface PaymentService {
          CustomerApplication.applicationContext.getBean(project.external.PaymentService.class)
             .requestPayment(payment);
 
+        //Following code causes dependency to external APIs
+        // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
+        RoomReservationReqeusted roomReservationReqeusted = new RoomReservationReqeusted();
+        BeanUtils.copyProperties(this, roomReservationReqeusted);
+        roomReservationReqeusted.publishAfterCommit();
+
     }
 ```
 
@@ -587,14 +594,14 @@ public interface PaymentService {
 # 결제 (payment) 서비스를 잠시 내려놓음 (ctrl+c)
 
 # 예약 요청 #Fail
-http POST http://a5ebfcb08c1a041548eacabecb9fa781-1794244842.ap-northeast-2.elb.amazonaws.com:8080/reservations customerId=1 roomId=10 roomName=“110호” customerName=“soyeon” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
+http POST http://localhost:8088/reservations customerId=1 roomId=2 roomName=“101호” customerName=“정지은” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED" 
 
 # 결제서비스 재기동
 cd payment
 mvn spring-boot:run
 
 # 예약 요청  #Success
-http POST http://a5ebfcb08c1a041548eacabecb9fa781-1794244842.ap-northeast-2.elb.amazonaws.com:8080/reservations customerId=1 roomId=10 roomName=“110호” customerName=“soyeon” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
+http POST http://localhost:8088/reservations customerId=1 roomId=2 roomName=“101호” customerName=“정지은” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED" 
 ```
 
 - 또한 과도한 요청시에 서비스 장애가 도미노 처럼 벌어질 수 있다. (서킷브레이커 처리는 운영단계에서 설명한다.)
@@ -603,7 +610,9 @@ http POST http://a5ebfcb08c1a041548eacabecb9fa781-1794244842.ap-northeast-2.elb.
 
 ## 비동기식 호출 / 시간적 디커플링 / 장애격리 / 최종 (Eventual) 일관성 테스트
 
+
 결제가 이루어진 후에 호텔 시스템의 상태가 업데이트 되고, 예약 시스템의 상태가 업데이트 되며 비동기식으로 호출된다.
+
 - 이를 위하여 결제가 승인되면 결제가 승인 되었다는 이벤트를 카프카로 송출한다. (Publish)
  
 ```
@@ -663,10 +672,10 @@ public class PolicyHandler{
 # 호텔 서비스 (hotel) 를 잠시 내려놓음 (ctrl+c)
 
 # 예약 요청  #Success
-http POST http://a5ebfcb08c1a041548eacabecb9fa781-1794244842.ap-northeast-2.elb.amazonaws.com:8080/reservations customerId=1 roomId=10 roomName=“110호” customerName=“soyeon” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
+http POST http://localhost:8088/reservations customerId=1 roomId=3 roomName=“103호” customerName=“정지은” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"  
 
 # 예약 상태 확인
-http GET http://a5ebfcb08c1a041548eacabecb9fa781-1794244842.ap-northeast-2.elb.amazonaws.com:8080/reservations
+http http://localhost:8088/reservations   # hotel 서비스와 상관없이 예약 상태는 정상 확인
 
 ```
 
@@ -724,6 +733,7 @@ public interface ReservationStatusViewRepository extends CrudRepository<Reservat
 ```
 
 실제 MariaDB 접속하여 확인 시, 데이터 확인 가능 (ex. Customer에서 객실 예약 요청한 경우)
+- http POST http://localhost:8088/reservations customerId=1 roomId=1 roomName=“101호” customerName=“soyeon” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
 
 ![image](https://user-images.githubusercontent.com/45943968/130158245-2d242319-ab00-4224-9c88-93f4a90b7311.png)
 
@@ -1062,68 +1072,3 @@ Concurrency:		       96.02
 배포기간 동안 Availability 가 변화없기 때문에 무정지 재배포가 성공한 것으로 확인됨.
 
 
-# 신규 개발 조직의 추가
-
-  ![image](https://user-images.githubusercontent.com/487999/79684133-1d6c4300-826a-11ea-94a2-602e61814ebf.png)
-
-
-## 마케팅팀의 추가
-    - KPI: 신규 고객의 유입률 증대와 기존 고객의 충성도 향상
-    - 구현계획 마이크로 서비스: 기존 customer 마이크로 서비스를 인수하며, 고객에 음식 및 맛집 추천 서비스 등을 제공할 예정
-
-## 이벤트 스토밍 
-    ![image](https://user-images.githubusercontent.com/487999/79685356-2b729180-8273-11ea-9361-a434065f2249.png)
-
-
-## 헥사고날 아키텍처 변화 
-
-![image](https://user-images.githubusercontent.com/487999/79685243-1d704100-8272-11ea-8ef6-f4869c509996.png)
-
-## 구현  
-
-기존의 마이크로 서비스에 수정을 발생시키지 않도록 Inbund 요청을 REST 가 아닌 Event 를 Subscribe 하는 방식으로 구현. 기존 마이크로 서비스에 대하여 아키텍처나 기존 마이크로 서비스들의 데이터베이스 구조와 관계없이 추가됨. 
-
-## 운영과 Retirement
-
-Request/Response 방식으로 구현하지 않았기 때문에 서비스가 더이상 불필요해져도 Deployment 에서 제거되면 기존 마이크로 서비스에 어떤 영향도 주지 않음.
-
-* [비교] 결제 (pay) 마이크로서비스의 경우 API 변화나 Retire 시에 app(주문) 마이크로 서비스의 변경을 초래함:
-
-예) API 변화시
-```
-# Order.java (Entity)
-
-    @PostPersist
-    public void onPostPersist(){
-
-        fooddelivery.external.결제이력 pay = new fooddelivery.external.결제이력();
-        pay.setOrderId(getOrderId());
-        
-        Application.applicationContext.getBean(fooddelivery.external.결제이력Service.class)
-                .결제(pay);
-
-                --> 
-
-        Application.applicationContext.getBean(fooddelivery.external.결제이력Service.class)
-                .결제2(pay);
-
-    }
-```
-
-예) Retire 시
-```
-# Order.java (Entity)
-
-    @PostPersist
-    public void onPostPersist(){
-
-        /**
-        fooddelivery.external.결제이력 pay = new fooddelivery.external.결제이력();
-        pay.setOrderId(getOrderId());
-        
-        Application.applicationContext.getBean(fooddelivery.external.결제이력Service.class)
-                .결제(pay);
-
-        **/
-    }
-``` 
