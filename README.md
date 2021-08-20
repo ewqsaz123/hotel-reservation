@@ -893,4 +893,34 @@ Customer 서비스 신규 버전으로 배포
 
 배포기간 동안 Availability 가 변화없기 때문에 무정지 재배포가 성공한 것으로 확인됨.
 
+## Self-Healing(Liveness Probe)
 
+테스트를 위해 buildspec.yml을 아래와 같이 수정 후 배포
+
+```
+livenessProbe:
+                      # httpGet:
+                      #   path: /actuator/health
+                      #   port: 8080
+                      exec:
+                        command:
+                        - cat
+                        - /tmp/healthy
+```
+
+![liveness1](https://user-images.githubusercontent.com/87056402/130177941-952fd244-5160-4873-b88a-d4951849dc58.png)
+
+ pod 상태 확인
+ 
+ kubectl describe ~ 로 pod에 들어가서 아래 메시지 확인
+ ```
+ Warning  Unhealthy  26s (x2 over 31s)     kubelet            Liveness probe failed: cat: /tmp/healthy: No such file or directory
+ ```
+
+/tmp/healthy 파일 생성
+```
+kubectl exec -it pod/user04-customer-5b7c4b6d7-p95n7 -n hotels -- touch /tmp/healthy
+```
+![liveness2](https://user-images.githubusercontent.com/87056402/130178115-6f9e3288-0220-43ea-a8f2-b0982470a3e5.png)
+
+성공 확인
