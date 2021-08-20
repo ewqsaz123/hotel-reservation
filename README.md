@@ -809,6 +809,10 @@ prop:
     url: ${apiurl}
 ``` 
 
+동기 호출 URL 실행
+![image](https://user-images.githubusercontent.com/45943968/130181863-9911ec1b-ce8d-4411-9334-8ddacb634035.png)
+
+
 ## 동기식 호출 / 서킷 브레이킹 / 장애격리
 
 * 서킷 브레이킹 프레임워크의 선택: istio의 Destination Rule을 적용 Traffic 관리함.
@@ -911,8 +915,9 @@ livenessProbe:
                         - /tmp/healthy
 ```
 
-pod 상태 확인
 ![liveness1](https://user-images.githubusercontent.com/87056402/130177941-952fd244-5160-4873-b88a-d4951849dc58.png)
+
+ pod 상태 확인
  
  kubectl describe ~ 로 pod에 들어가서 아래 메시지 확인
  ```
@@ -923,7 +928,6 @@ pod 상태 확인
 ```
 kubectl exec -it pod/user04-customer-5b7c4b6d7-p95n7 -n hotels -- touch /tmp/healthy
 ```
-성공 확인
 ![liveness2](https://user-images.githubusercontent.com/87056402/130178115-6f9e3288-0220-43ea-a8f2-b0982470a3e5.png)
 
-
+성공 확인
