@@ -515,7 +515,7 @@ http localhost:8080/orders     # 모든 주문의 상태가 "배송됨"으로 �
 각 구현체들은 각자의 source repository 에 구성되었고, 사용한 CI/CD 플랫폼은 GCP를 사용하였으며, pipeline build script 는 각 프로젝트 폴더 이하에 cloudbuild.yml 에 포함되었다.
 
 
-##ConfigMap 설정
+## ConfigMap 설정
 
 
  동기 호출 URL을 ConfigMap에 등록하여 사용
