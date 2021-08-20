@@ -41,7 +41,7 @@ public class AbstractEvent {
         if( json != null ){
 
             /**
-             * spring streams 방식 test
+             * spring streams 방식
              */
             KafkaProcessor processor = CustomerApplication.applicationContext.getBean(KafkaProcessor.class);
             MessageChannel outputChannel = processor.outboundTopic();
