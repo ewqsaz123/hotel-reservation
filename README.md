@@ -357,23 +357,36 @@ hotel reservation 프로젝트에서는 PolicyHandler에서 처리 시 어떤 �
 예약건의 취소를 수행하면 다시 연관된 방(Room), 결제(Payment) 등의 서비스의 상태값 등의 데이터가 적당한 상태로 변경되는 것을
 확인할 수 있습니다.
 
+
 예약등록
-http POST http://localhost:8088/reservations customerId=1 roomId=2 roomName=“101호” customerName=“정지은” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
+http POST http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/reservations customerId=1 roomId=21 roomName=2101호 customerName=soyeon hotelId=1 hotelName=신라 checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=RSV_REQUESTED paymentStatus=PAY_REQUESTED
 
 예약 후 - 예약 상태
-http http://localhost:8088/reservations
+http GET http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/reservations
+
+![E9547BE6-E3F8-482E-9D0D-89F960A1E521](https://user-images.githubusercontent.com/20436113/130180823-d93b2798-e94a-4d9e-9079-d1a423650fec.jpeg)
+
 
 예약 후 - 결제 상태
-http http://localhost:8088/payments
+http GET http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/payments
+
+![CA0F6234-73A9-4053-BEB8-223915BF05E2](https://user-images.githubusercontent.com/20436113/130180841-9b9de6b5-3c2b-4545-9771-5ffcc2624362.jpeg)
+
 
 예약 취소
-http PATCH http://localhost:8088/reservations/2 reservationStatus="RSV_CANCELED"
+http PATCH http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/reservations/2 reservationStatus=RSV_CANCELED
 
 취소 후 - 예약 상태
-http http://localhost:8088/reservations
+http GET http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/reservations
+
+![469C164F-5ADD-4F4D-B785-16FAFF9EF3C3](https://user-images.githubusercontent.com/20436113/130180865-d2d6594b-f030-41a6-aa30-88026008093e.jpeg)
+
 
 취소 후 - 결제 상태
-http http://localhost:8088/payments
+http GET http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/payments
+
+![FB1A6505-C230-40AD-A6CD-11B94005E02C](https://user-images.githubusercontent.com/20436113/130180880-685e9c41-a751-4706-894d-62e9afb2c8ce.jpeg)
+
 
 
 ## DDD 의 적용
