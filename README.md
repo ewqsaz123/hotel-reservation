@@ -751,7 +751,9 @@ AWS CodeBuild 적용 현황
 webhook을 통한 CI 확인
 ![운영_코드빌드2](https://user-images.githubusercontent.com/27762942/130167704-10fb2f7a-c7cc-4c57-92d5-743a09fdc2fc.png)
 
-//ecr repository user04-* 이미지
+AWS ECR 적용 현황
+![image](https://user-images.githubusercontent.com/27762942/130168223-34759c4e-8f01-4c4a-95ed-921c9d41a71d.png)
+
 
 EKS에 배포된 내용
 
