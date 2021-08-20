@@ -192,7 +192,7 @@
         - 예약 요청 시 결제처리:  결제가 완료되지 않은 예약은 절대 받지 않는다는 정책에 따라, ACID 트랜잭션 적용. 예약요청시 결제처리에 대해서는 Request-Response 방식 처리
         - 결제 완료시 호텔관리자연결 및 최종 예약 완료 및 Room 상태 변경 처리:  CustomerApp(front) 에서 RoomManagement 마이크로서비스로 주문요청이 전달되는 과정에 있어서 RoomManagement 마이크로 서비스가 별도의 배포주기를 가지기 때문에 Eventual Consistency 방식으로 트랜잭션 처리함.
         - 나머지 모든 inter-microservice 트랜잭션: 예약상태, Room상태 등 모든 이벤트에 대해 ReservationStatusView 처리 등, 데이터 일관성의 시점이 크리티컬하지 않은 모든 경우가 대부분이라 판단, Eventual Consistency 를 기본으로 채택함.
-        - 호텔 관리 기능이 수행되지 않더라도 예약 주문은 365일 24시간 받을 수 있어야 한다  Async (event-driven), Eventual Consistency
+	- 호텔 관리 기능이 수행되지 않더라도 예약 주문은 365일 24시간 받을 수 있어야 한다  Async (event-driven), Eventual Consistency
         - 결제시스템이 과중되면 사용자를 잠시동안 받지 않고 결제를 잠시후에 하도록 유도한다  Circuit breaker, fallback
 
 
@@ -807,38 +807,9 @@ prop:
 
 ## 동기식 호출 / 서킷 브레이킹 / 장애격리
 
-* 서킷 브레이킹 프레임워크의 선택: Spring FeignClient + Hystrix 옵션을 사용하여 구현함
+* 서킷 브레이킹 프레임워크의 선택: istio의 Destination Rule을 적용 Traffic 관리함.
 
-시나리오는 단말앱(app)-->결제(pay) 시의 연결을 RESTful Request/Response 로 연동하여 구현이 되어있고, 결제 요청이 과도할 경우 CB 를 통하여 장애격리.
-
-- Hystrix 를 설정:  요청처리 쓰레드에서 처리시간이 610 밀리가 넘어서기 시작하여 어느정도 유지되면 CB 회로가 닫히도록 (요청을 빠르게 실패처리, 차단) 설정
-```
-# application.yml
-
-hystrix:
-  command:
-    # 전역설정
-    default:
-      execution.isolation.thread.timeoutInMilliseconds: 610
-
-```
-
-- 피호출 서비스(결제:pay) 의 임의 부하 처리 - 400 밀리에서 증감 220 밀리 정도 왔다갔다 하게
-```
-# (pay) 결제이력.java (Entity)
-
-    @PrePersist
-    public void onPrePersist(){  //결제이력을 저장한 후 적당한 시간 끌기
-
-        ...
-        
-        try {
-            Thread.currentThread().sleep((long) (400 + Math.random() * 220));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-```
+시나리오는 단말앱(customer)-->결제(pay) 시의 연결을 RESTful Request/Response 로 연동하여 구현이 되어있고, 결제 요청이 과도할 경우 CB 를 통하여 장애격리.
 
 * 부하테스터 siege 툴을 통한 서킷 브레이커 동작 확인:
 - 동시사용자 10명
@@ -848,8 +819,10 @@ hystrix:
 siege -c10 -t10s -v http://user04-gateway:8080/payments 
 
 ```
-![cb1](https://user-images.githubusercontent.com/87056402/130167139-4d172715-0ef0-480e-9e5f-180f48dde4c3.png)
 ![cb2](https://user-images.githubusercontent.com/87056402/130167142-290b8c51-3f08-4d84-91d0-878af3818059.png)
+
+![cb3](https://user-images.githubusercontent.com/87056402/130168542-681767c3-970f-4a86-a2b9-4599abbb14cd.png)
+
 
 
 - 운영시스템은 죽지 않고 지속적으로 CB 에 의하여 적절히 회로가 열림과 닫힘이 벌어지면서 자원을 보호하고 있음을 보여줌. 하지만, 63.55% 가 성공하였고, 46%가 실패했다는 것은 고객 사용성에 있어 좋지 않기 때문에 Retry 설정과 동적 Scale out (replica의 자동적 추가,HPA) 을 통하여 시스템을 확장 해주는 후속처리가 필요.
