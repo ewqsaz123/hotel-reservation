@@ -250,7 +250,8 @@
 
 - 실제로 view 페이지를 조회해 보면 모든 room에 대한 정보, 예약 상태, 결제 상태 등의 정보를 종합적으로 알 수 있다.
 
-  ![image](https://user-images.githubusercontent.com/45943968/130037060-ff52d49c-733a-4dd5-a741-85416691ce50.png)
+  ![97C55B73-4275-4385-964A-80768D033C66](https://user-images.githubusercontent.com/20436113/130180654-1d2c582f-8aa6-4bbd-b2a3-cf39a34e0b85.jpeg)
+
   
 ## API 게이트웨이
 
