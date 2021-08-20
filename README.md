@@ -894,7 +894,7 @@ Customer 서비스 신규 버전으로 배포
 
 배포기간 동안 Availability 가 변화없기 때문에 무정지 재배포가 성공한 것으로 확인됨.
 
-## Self-Healing(Liveness Probe)
+## Liveness Probe
 
 테스트를 위해 buildspec.yml을 아래와 같이 수정 후 배포
 
