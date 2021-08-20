@@ -224,6 +224,9 @@ cd customer
 python policy-handler.py 
 ```
 
+![image](https://user-images.githubusercontent.com/45943968/130162849-3bb3faa1-542d-49e5-9eed-d376c7ad80f1.png)
+
+
 ## CQRS
 
 숙소 생성 및 예약/결재 등 총 Status 에 대하여 고객(customer)/호텔매니저(hotel)가 조회 할 수 있도록 CQRS 로 구현하였다.
