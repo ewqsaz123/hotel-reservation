@@ -809,8 +809,6 @@ prop:
     url: ${apiurl}
 ``` 
 
-//URL 호출 결과 추가 필요
-
 ## 동기식 호출 / 서킷 브레이킹 / 장애격리
 
 * 서킷 브레이킹 프레임워크의 선택: istio의 Destination Rule을 적용 Traffic 관리함.
