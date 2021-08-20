@@ -770,7 +770,7 @@ EKS에 배포된 내용
  kubectl apply -f configmap
 
 --파일내용
-
+```
  apiVersion: v1
  kind: ConfigMap
  metadata:
@@ -779,10 +779,10 @@ EKS에 배포된 내용
  data:
    apiurl: "http://user04-gateway:8080"
 
-
+```
 buildspec 수정
 
-
+```
               spec:
                 containers:
                   - name: $_PROJECT_NAME
@@ -796,20 +796,21 @@ buildspec 수정
                           name: hotel-configmap
                           key: apiurl 
                         
-               
+```            
 application.yml 수정
-
+```
 prop:
   room:
     url: ${apiurl}
-    
+``` 
+
 //URL 호출 결과 추가 필요
 
 ## 동기식 호출 / 서킷 브레이킹 / 장애격리
 
 * 서킷 브레이킹 프레임워크의 선택: istio의 Destination Rule을 적용 Traffic 관리함.
 
-시나리오는 단말앱(customer)-->결제(pay) 시의 연결을 RESTful Request/Response 로 연동하여 구현이 되어있고, 결제 요청이 과도할 경우 CB 를 통하여 장애격리.
+시나리오는 고객서비스(customer)-->결제(payment) 시의 연결을 RESTful Request/Response 로 연동하여 구현이 되어있고, 결제 요청이 과도할 경우 CB 를 통하여 장애격리.
 
 * 부하테스터 siege 툴을 통한 서킷 브레이커 동작 확인:
 - 동시사용자 10명
