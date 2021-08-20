@@ -756,6 +756,8 @@ public interface ReservationStatusViewRepository extends CrudRepository<Reservat
 
 EKS에 배포된 내용
 
+![eks](https://user-images.githubusercontent.com/87056402/130163825-92ffa0ae-26b2-4c79-b562-680c892fcdd9.png)
+
 
 
 ## ConfigMap 설정
