@@ -1,6 +1,7 @@
-![images_LOGO](https://user-images.githubusercontent.com/27762942/130010271-78c9f4a0-66f3-45f4-ba9a-69659b88235e.png)
+![image](https://user-images.githubusercontent.com/20436113/131467413-b2ec2ac9-9149-4590-851d-83a43cb271d6.png)
 
-# 호텔 예약
+
+# E-Book 대여 시스템
 
 클라우드 네이티브 애플리케이션의 개발에 요구되는 체크포인트 확인
 - 체크포인트 : https://workflowy.com/s/assessment-check-po/T5YrzcMewfo4J6LW
@@ -8,7 +9,7 @@
 
 # Table of contents
 
-- [호텔예약](#---)
+- [E-Book 대여](#---)
   - [서비스 시나리오](#서비스-시나리오)
   - [체크포인트](#체크포인트)
   - [분석/설계](#분석설계)
@@ -29,7 +30,7 @@
 
 # 서비스 시나리오
 
-호텔 예약 서비스
+E-Book  서비스
 
 기능적 요구사항
 기능적 요구사항
