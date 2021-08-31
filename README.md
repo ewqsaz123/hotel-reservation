@@ -1,4 +1,4 @@
-![image](https://user-images.githubusercontent.com/20436113/131467413-b2ec2ac9-9149-4590-851d-83a43cb271d6.png)
+![image](https://user-images.githubusercontent.com/20436113/131467647-03e923f0-3295-4b24-87d9-4ee4a09e8cb6.png)
 
 
 # E-Book 대여 시스템
