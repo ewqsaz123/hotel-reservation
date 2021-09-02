@@ -47,7 +47,6 @@ phases:
           kind: Service
           metadata:
             name: $_PROJECT_NAME
-            namespace: $_NAMESPACE
             labels:
               app: $_PROJECT_NAME
           spec:
