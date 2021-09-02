@@ -2,9 +2,9 @@ version: 0.2
 
 env:
   variables:
-    _PROJECT_NAME: "user04-hotel"
-    _DIR_NAME: "hotel"
-    _NAMESPACE: "hotels"
+    _PROJECT_NAME: "user21-hotel"
+    _DIR_NAME: "Manage"
+    _NAMESPACE: "rental"
 
 phases:
   install:
