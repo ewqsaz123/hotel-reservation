@@ -3,7 +3,7 @@ version: 0.2
 env:
   variables:
     _PROJECT_NAME: "user21-customer"
-    _DIR_NAME: "customer"
+    _DIR_NAME: "Rental"
     _NAMESPACE: "rental"
 
 phases:
