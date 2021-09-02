@@ -3,22 +3,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: CustomerApp
+  name: Rental
   labels:
-    app: CustomerApp
+    app: Rental
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: CustomerApp
+      app: Rental
   template:
     metadata:
       labels:
-        app: CustomerApp
+        app: Rental
     spec:
       containers:
-        - name: CustomerApp
-          image: username/CustomerApp:latest
+        - name: Rental
+          image: username/Rental:latest
           ports:
             - containerPort: 8080
           readinessProbe:
@@ -83,22 +83,22 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: Store
+  name: Manage
   labels:
-    app: Store
+    app: Manage
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: Store
+      app: Manage
   template:
     metadata:
       labels:
-        app: Store
+        app: Manage
     spec:
       containers:
-        - name: Store
-          image: username/Store:latest
+        - name: Manage
+          image: username/Manage:latest
           ports:
             - containerPort: 8080
           readinessProbe:
@@ -165,15 +165,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: CustomerApp
+  name: Rental
   labels:
-    app: CustomerApp
+    app: Rental
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    app: CustomerApp
+    app: Rental
 
 
 ---
@@ -199,15 +199,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: Store
+  name: Manage
   labels:
-    app: Store
+    app: Manage
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    app: Store
+    app: Manage
 
 
 ---

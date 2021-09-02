@@ -8,22 +8,22 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: customer
+        - id: Rental
           uri: http://localhost:8081
           predicates:
-            - Path=/reservations/** 
-        - id: payment
+            - Path=/rentals/** 
+        - id: Payment
           uri: http://localhost:8082
           predicates:
             - Path=/payments/** 
-        - id: hotel
+        - id: Manage
           uri: http://localhost:8083
           predicates:
-            - Path=/roomManagements/** 
-        - id: viewPage
+            - Path=/manages/** 
+        - id: ViewPage
           uri: http://localhost:8084
           predicates:
-            - Path=/reservationStatusViews/**
+            - Path= /rentalStatusViews/**
       globalcors:
         corsConfigurations:
           '[/**]':
@@ -43,22 +43,22 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: customer
-          uri: http://user04-customer:8080
+        - id: Rental
+          uri: http://Rental:8080
           predicates:
-            - Path=/reservations/** 
-        - id: payment
-          uri: http://user04-payment:8080
+            - Path=/rentals/** 
+        - id: Payment
+          uri: http://Payment:8080
           predicates:
             - Path=/payments/** 
-        - id: hotel
-          uri: http://user04-hotel:8080
+        - id: Manage
+          uri: http://Manage:8080
           predicates:
-            - Path=/roomManagements/** 
-        - id: viewPage
-          uri: http://user04-viewPage:8080
+            - Path=/manages/** 
+        - id: ViewPage
+          uri: http://ViewPage:8080
           predicates:
-            - Path=/reservationStatusViews/**
+            - Path= /rentalStatusViews/**
       globalcors:
         corsConfigurations:
           '[/**]':

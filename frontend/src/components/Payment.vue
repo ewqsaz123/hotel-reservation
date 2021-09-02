@@ -24,111 +24,16 @@
     <v-card-text style = "margin-left:-15px; margin-top:10px;">
 
           <div class="grey--text ml-4" v-if="editMode" style = "margin-top:-20px;">
-            <v-text-field type="number" label="ReservationId" v-model="value.reservationId"/>
+            <v-text-field type="number" label="RentalId" v-model="value.rentalId"/>
           </div>
           <div class="grey--text ml-4" v-else>
-            ReservationId :  {{value.reservationId }}
+            RentalId :  {{value.rentalId }}
           </div>
           <div class="grey--text ml-4" v-if="editMode" style = "margin-top:-20px;">
-            <v-text-field type="number" label="CustomerId" v-model="value.customerId"/>
+            <v-text-field label="RentalStatus" v-model="value.rentalStatus"/>
           </div>
           <div class="grey--text ml-4" v-else>
-            CustomerId :  {{value.customerId }}
-          </div>
-          <div class="grey--text ml-4" v-if="editMode" style = "margin-top:-20px;">
-            <v-text-field label="CustomerName" v-model="value.customerName"/>
-          </div>
-          <div class="grey--text ml-4" v-else>
-            CustomerName :  {{value.customerName }}
-          </div>
-
-          <div class="grey--text ml-4" v-if="editMode" style = "margin-top:-20px;">
-            <v-text-field type="number" label="HotelId" v-model="value.hotelId"/>
-          </div>
-          <div class="grey--text ml-4" v-else>
-            HotelId :  {{value.hotelId }}
-          </div>
-          <div class="grey--text ml-4" v-if="editMode" style = "margin-top:-20px;">
-            <v-text-field label="HotelName" v-model="value.hotelName"/>
-          </div>
-          <div class="grey--text ml-4" v-else>
-            HotelName :  {{value.hotelName }}
-          </div>
-
-          <div class="grey--text ml-4" v-if="editMode" style = "margin-top:-20px;">
-            <v-text-field type="number" label="RoomPrice" v-model="value.roomPrice"/>
-          </div>
-          <div class="grey--text ml-4" v-else>
-            RoomPrice :  {{value.roomPrice }}
-          </div>
-          <div class="grey--text ml-4" v-if="editMode" style = "margin-top:-20px;">
-            <v-text-field type="number" label="RoomId" v-model="value.roomId"/>
-          </div>
-          <div class="grey--text ml-4" v-else>
-            RoomId :  {{value.roomId }}
-          </div>
-          <div class="grey--text ml-4" v-if="editMode" style = "margin-top:-20px;">
-            <v-text-field label="RoomName" v-model="value.roomName"/>
-          </div>
-          <div class="grey--text ml-4" v-else>
-            RoomName :  {{value.roomName }}
-          </div>
-
-          <div class="grey--text ml-4" v-if="editMode" style = "margin-top:-20px;">
-            <v-menu
-                v-model="menu"
-                width="290px"
-            >
-                <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                    v-model="value.checkInDate"
-                    label="CheckInDate"
-                    prepend-icon="mdi-calendar"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                ></v-text-field>
-                </template>
-                <v-date-picker
-                v-model="value.checkInDate"
-                :min="new Date().toISOString().substr(0, 10)"
-                @input="menu = false"
-                ></v-date-picker>
-            </v-menu>
-          </div>
-          <div class="grey--text ml-4" v-else>
-            CheckInDate :  {{value.checkInDate }}
-          </div>
-          <div class="grey--text ml-4" v-if="editMode" style = "margin-top:-20px;">
-            <v-menu
-                v-model="menu"
-                width="290px"
-            >
-                <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                    v-model="value.checkOutDate"
-                    label="CheckOutDate"
-                    prepend-icon="mdi-calendar"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                ></v-text-field>
-                </template>
-                <v-date-picker
-                v-model="value.checkOutDate"
-                :min="new Date().toISOString().substr(0, 10)"
-                @input="menu = false"
-                ></v-date-picker>
-            </v-menu>
-          </div>
-          <div class="grey--text ml-4" v-else>
-            CheckOutDate :  {{value.checkOutDate }}
-          </div>
-          <div class="grey--text ml-4" v-if="editMode" style = "margin-top:-20px;">
-            <v-text-field label="PaymentStatus" v-model="value.paymentStatus"/>
-          </div>
-          <div class="grey--text ml-4" v-else>
-            PaymentStatus :  {{value.paymentStatus }}
+            RentalStatus :  {{value.rentalStatus }}
           </div>
 
 

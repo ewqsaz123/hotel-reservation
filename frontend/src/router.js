@@ -5,24 +5,22 @@ import Router from 'vue-router'
 Vue.use(Router);
 
 
-import ReservationManager from "./components/ReservationManager"
+import RentalManager from "./components/RentalManager"
 
 import PaymentManager from "./components/PaymentManager"
 
-import RoomManagementManager from "./components/RoomManagementManager"
+import ManageManager from "./components/ManageManager"
 
 
-import ReservationInfo from "./components/ReservationInfo"
-import RoomReservationInfo from "./components/RoomReservationInfo"
-import ResevationStatusView from "./components/ResevationStatusView"
+import RentalStatusView from "./components/RentalStatusView"
 export default new Router({
     // mode: 'history',
     base: process.env.BASE_URL,
     routes: [
             {
-                path: '/reservations',
-                name: 'ReservationManager',
-                component: ReservationManager
+                path: '/rentals',
+                name: 'RentalManager',
+                component: RentalManager
             },
 
             {
@@ -32,26 +30,16 @@ export default new Router({
             },
 
             {
-                path: '/roomManagements',
-                name: 'RoomManagementManager',
-                component: RoomManagementManager
+                path: '/manages',
+                name: 'ManageManager',
+                component: ManageManager
             },
 
 
             {
-                path: '/reservationInfos',
-                name: 'ReservationInfo',
-                component: ReservationInfo
-            },
-            {
-                path: '/roomReservationInfos',
-                name: 'RoomReservationInfo',
-                component: RoomReservationInfo
-            },
-            {
-                path: '/resevationStatusViews',
-                name: 'ResevationStatusView',
-                component: ResevationStatusView
+                path: '/rentalStatusViews',
+                name: 'RentalStatusView',
+                component: RentalStatusView
             },
 
 

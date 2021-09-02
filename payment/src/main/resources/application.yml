@@ -25,11 +25,11 @@ spring:
                   serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       bindings:
         event-in:
-          group: payment
-          destination: project
+          group: Payment
+          destination: rentalapp
           contentType: application/json
         event-out:
-          destination: project
+          destination: rentalapp
           contentType: application/json
 
 logging:
@@ -57,9 +57,9 @@ spring:
                   serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       bindings:
         event-in:
-          group: payment
-          destination: project
+          group: Payment
+          destination: rentalapp
           contentType: application/json
         event-out:
-          destination: project
+          destination: rentalapp
           contentType: application/json
