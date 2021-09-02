@@ -44,7 +44,7 @@ public class RentalStatusViewViewHandler {
             if (!rentalRequested.validate()) return;
                 // view 객체 조회
 
-                RentalStatusView rentalStatusView = rentalStatusViewRepository.findByRentalId(rentalRequested.getBookId());
+                RentalStatusView rentalStatusView = rentalStatusViewRepository.findByBookId(rentalRequested.getBookId());
                 
                 if(rentalStatusView != null){
                     // view 객체에 이벤트의 eventDirectValue 를 set 함

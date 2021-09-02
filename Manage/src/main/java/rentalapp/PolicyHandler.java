@@ -32,7 +32,7 @@ public class PolicyHandler{
         System.out.println("####PolicyHandler: wheneverRentalCanceled_RequestCancel####" );
         System.out.println("\n\n##### listener RequestCancel : " + rentalCanceled.toJson() + "\n\n");
 
-        setChengedStatus( rentalCanceled.getBookId(), rentalCanceled.getRentalId(),rentalCanceled.getRentalStatus(), "");
+        setChengedStatus( rentalCanceled.getBookId(), rentalCanceled.getRentalId(),"CANCELED", "");
     }
 
 

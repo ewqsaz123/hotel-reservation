@@ -21,7 +21,7 @@ public class PolicyHandler{
         System.out.println("####PolicyHandler: wheneverPaymentCompleted_PaymentComplete####" );
         System.out.println("\n\n##### listener PaymentComplete : " + paymentCompleted.toJson() + "\n\n");
 
-        setChengedStatus(paymentCompleted.getRentalId(), paymentCompleted.getRentalStatus());
+        setChengedStatus(paymentCompleted.getRentalId(), "PAID");
     }
     @StreamListener(KafkaProcessor.INPUT)
     public void wheneverPaymentCanceled_RentalCancel(@Payload PaymentCanceled paymentCanceled){
@@ -30,7 +30,7 @@ public class PolicyHandler{
         System.out.println("####PolicyHandler: wheneverPaymentCanceled_RentalCancel####" );
         System.out.println("\n\n##### listener RentalCancel : " + paymentCanceled.toJson() + "\n\n");
 
-        setChengedStatus(paymentCanceled.getRentalId(), paymentCanceled.getRentalStatus());
+        setChengedStatus(paymentCanceled.getRentalId(), "CANCELED");
 
     }
     @StreamListener(KafkaProcessor.INPUT)
@@ -40,7 +40,7 @@ public class PolicyHandler{
         System.out.println("####PolicyHandler: wheneverRequestApproved_RequestApprove####" );
         System.out.println("\n\n##### listener RequestApprove : " + requestApproved.toJson() + "\n\n");
 
-        setChengedStatus(requestApproved.getRentalId(), requestApproved.getRentalStatus());
+        setChengedStatus(requestApproved.getRentalId(), "APPROVED");
     }
 
 

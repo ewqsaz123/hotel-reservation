@@ -22,7 +22,7 @@ public class PolicyHandler{
 
         System.out.println("\n\n##### listener PaymentCancel : " + requestDenied.toJson() + "\n\n");
 
-        setChengedStatus(requestDenied.getRentalId(), requestDenied.getRentalStatus());
+        setChengedStatus(requestDenied.getRentalId(), "REJECTED");
 
 
     }
@@ -34,7 +34,7 @@ public class PolicyHandler{
 
         System.out.println("\n\n##### listener PaymentCancel : " + requestCanceled.toJson() + "\n\n");
 
-        setChengedStatus(requestCanceled.getRentalId(), requestCanceled.getRentalStatus());
+        setChengedStatus(requestCanceled.getRentalId(), "CANCELED");
 
     }
 
