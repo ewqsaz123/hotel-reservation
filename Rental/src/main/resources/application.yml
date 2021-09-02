@@ -72,4 +72,4 @@ spring:
 
 api:
   service:
-    url: {apiurl}
+    url: ${apiurl}
