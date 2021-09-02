@@ -44,19 +44,19 @@ spring:
     gateway:
       routes:
         - id: Rental
-          uri: http://Rental:8080
+          uri: http://user21-rental:8080
           predicates:
             - Path=/rentals/** 
         - id: Payment
-          uri: http://Payment:8080
+          uri: http://user21-payment:8080
           predicates:
             - Path=/payments/** 
         - id: Manage
-          uri: http://Manage:8080
+          uri: http://user21-manage:8080
           predicates:
             - Path=/manages/** 
         - id: ViewPage
-          uri: http://ViewPage:8080
+          uri: http://user21-viewpage:8080
           predicates:
             - Path= /rentalStatusViews/**
       globalcors:
