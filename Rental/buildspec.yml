@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    _PROJECT_NAME: "user21-customer"
+    _PROJECT_NAME: "user21-rental"
     _DIR_NAME: "Rental"
     _NAMESPACE: "rental"
 
