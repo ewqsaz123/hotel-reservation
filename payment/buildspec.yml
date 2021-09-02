@@ -2,9 +2,9 @@ version: 0.2
 
 env:
   variables:
-    _PROJECT_NAME: "user04-payment"
+    _PROJECT_NAME: "user21-payment"
     _DIR_NAME: "payment"
-    _NAMESPACE: "hotels"
+    _NAMESPACE: "rental"
 
 phases:
   install:
