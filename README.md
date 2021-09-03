@@ -244,7 +244,7 @@ E-Book  서비스
   ("RentalReqeusted" 이벤트 발생 시, Pub/Sub 기반으로 별도 테이블에 저장)
 
   ![image](https://user-images.githubusercontent.com/20436113/131938065-973be539-6585-44d8-9dde-1a3b82135b78.png)
-- 실제로 view 페이지를 조회해 보면 모든 room에 대한 정보, 예약 상태, 결제 상태 등의 정보를 종합적으로 알 수 있다.
+- 실제로 view 페이지를 조회해 보면 모든 에 대한 정보, 예약 상태, 결제 상태 등의 정보를 종합적으로 알 수 있다.
 
   ![8E1B38B6-CD21-42C2-A1D7-B19EF5620DE5](https://user-images.githubusercontent.com/20436113/131938379-6e45b13c-3ab5-4688-bec5-f0d82668f3ab.jpeg)
 
