@@ -746,7 +746,7 @@ CB가 없기 때문에 100% 성공
 # istio-injection 활성화
 kubectl label namespace rental istio-injection=enabled 
 
-# VirtualService 적용 
+# DestinationRule 적용 
 kubectl apply -f destinationRule -n rental
 
 apiVersion: networking.istio.io/v1alpha3
