@@ -739,6 +739,7 @@ siege -c10 -t10S -v --content-type "application/json" 'http://user21-rental:8080
 
 ```
 ![4C68F8BB-D148-4C89-BCED-9366BFE13D01](https://user-images.githubusercontent.com/20436113/131940447-436be5b7-b866-4169-96a4-8a9acdbc9fb2.jpeg)
+
 CB가 없기 때문에 100% 성공
 
 ```
@@ -746,27 +747,26 @@ CB가 없기 때문에 100% 성공
 kubectl label namespace rental istio-injection=enabled 
 
 # VirtualService 적용 
-kubectl apply -f VirtualService.yaml
+kubectl apply -f destinationRule -n rental
 
 apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
+kind: DestinationRule
 metadata:
-  name: vs-rev
+  name: user21-rental
   namespace: rental
 spec:
-  hosts:
-  - "user21-rental"
-  http:
-  - route:
-    - destination:
-        host: "user21-rental"
-    timeout: 0.1s
-	
+  host: user21-rental
+  trafficPolicy:
+    connectionPool:
+      http:
+        http1MaxPendingRequests: 1
+        maxRequestsPerConnection: 1
 
 ```
 
 
 ![59E483F1-5FD2-4198-8CEF-0DE9CC743DD7](https://user-images.githubusercontent.com/20436113/131940536-95c22212-a512-4e43-b4a9-c16ae12301bd.jpeg)
+
 CB적용 되어 일부 실패 확인
 
 
