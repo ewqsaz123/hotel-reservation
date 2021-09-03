@@ -116,7 +116,7 @@ E-Book  서비스
 ![분석설계0](https://user-images.githubusercontent.com/27762942/130011063-35d4610a-540a-43c8-a3b3-195e8ac0b6d4.png)
 
 ## TO-BE 조직 (Vertically-Aligned)
-![분석설계1_new](https://user-images.githubusercontent.com/27762942/130180713-99d7d8ae-5b11-423c-9a56-15d9ba873dd2.png)
+투비조직_2.png![투비조직_2](https://user-images.githubusercontent.com/20436113/131941801-570e1695-2a3b-4f31-a2da-a4bc8dbba831.png)
 
 ## Event Storming 결과
 * MSAEz 로 모델링한 이벤트스토밍 결과:  http://labs.msaez.io/#/storming/gvBKJ8asEZSiRXXDACkN51rc7D83/b91e49b9c2bccf0e41a4d77414fc5141
