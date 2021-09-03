@@ -380,11 +380,10 @@ http http://ae9e4f2df26fb4609ad3506aa7d808e4-1575466458.eu-west-2.elb.amazonaws.
 
 
 
-승인 후 - 결제 상태
-http http://ae9e4f2df26fb4609ad3506aa7d808e4-1575466458.eu-west-2.elb.amazonaws.com:8080/payments
+승인 후 - 대여 상태
+http http://ae9e4f2df26fb4609ad3506aa7d808e4-1575466458.eu-west-2.elb.amazonaws.com:8080/managed
 
-![787C6244-9E96-4EF0-86A8-8354A85604E6](https://user-images.githubusercontent.com/20436113/131938980-d348ccd2-3ea3-4d28-bfc5-0941ee2513e0.jpeg)
-
+![2140C382-57A0-49B4-AB37-0E235F79A1BF](https://user-images.githubusercontent.com/20436113/131948985-1094eb69-f281-4c54-b17a-7c9bef1220b9.jpeg)
 
 ## DDD 의 적용
 
