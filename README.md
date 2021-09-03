@@ -199,7 +199,7 @@ E-Book  서비스
 
 ## 헥사고날 아키텍처 다이어그램 도출
     
-![헥사고날_new](https://user-images.githubusercontent.com/27762942/130165884-187c7007-b1e7-4729-a47b-c2f8880f74ce.png)
+헥사고날_2.png![헥사고날_2](https://user-images.githubusercontent.com/20436113/131936708-0fac369d-75f9-4906-b043-7e19fc57e3e9.png)
 
 
     - Chris Richardson, MSA Patterns 참고하여 Inbound adaptor와 Outbound adaptor를 구분함
@@ -212,13 +212,13 @@ E-Book  서비스
 분석/설계 단계에서 도출된 헥사고날 아키텍처에 따라, 각 BC별로 대변되는 마이크로 서비스들을 스프링부트로 구현하였다. 구현한 각 서비스를 로컬에서 실행하는 방법은 아래와 같다 (각자의 포트넘버는 8081 ~ 808n 이다)
 
 ```
-   cd customer
+   cd Rental
    mvn spring-boot:run
    
-   cd payment
+   cd Payment
    mvn spring-boot:run
    
-   cd hotel
+   cd Manage
    mvn spring-boot:run
    
    cd viewPage
@@ -231,25 +231,25 @@ E-Book  서비스
 
 ## CQRS
 
-숙소 생성 및 예약/결재 등 총 Status 에 대하여 고객(customer)/호텔매니저(hotel)가 조회 할 수 있도록 CQRS 로 구현하였다.
-- customer, payment, hotel 개별 Aggregate Status 를 통합 조회하여 성능 Issue 를 사전에 예방할 수 있다.
+숙소 생성 및 예약/결재 등 총 Status 에 대하여 고객(rental)/호텔매니저(manage)가 조회 할 수 있도록 CQRS 로 구현하였다.
+- rental, payment, manage 개별 Aggregate Status 를 통합 조회하여 성능 Issue 를 사전에 예방할 수 있다.
 - 비동기식으로 처리되어 발행된 이벤트 기반 Kafka 를 통해 수신/처리 되어 별도 Table 에 관리한다
 - Table 모델링
 
-  ![image](https://user-images.githubusercontent.com/45943968/130036215-49ef828e-bee8-4160-8536-3da2cac75a71.png)
-
+  ![image](https://user-images.githubusercontent.com/20436113/131938148-b1dcc8e8-698d-4934-b136-d03533e52866.png)
+  
 - viewPage MSA PolicyHandler 를 통해 구현 
-  ("RoomCreated" 이벤트 발생 시, Pub/Sub 기반으로 별도 테이블에 저장)
+  ("BookAdded" 이벤트 발생 시, Pub/Sub 기반으로 별도 테이블에 저장)
+  ![image](https://user-images.githubusercontent.com/20436113/131938120-4d4e8543-833e-4ffe-9c08-3f4a32a52c52.png)
 
-  ![image](https://user-images.githubusercontent.com/45943968/130036716-7010815f-7d31-4201-8a02-dac1af5193ed.png)
-  ("RoomReservationReqeusted" 이벤트 발생 시, Pub/Sub 기반으로 별도 테이블에 저장)
+  ("RentalReqeusted" 이벤트 발생 시, Pub/Sub 기반으로 별도 테이블에 저장)
 
-  ![image](https://user-images.githubusercontent.com/45943968/130036767-65e85e0b-503e-4fa8-b505-4b860eccd8ee.png)
-
+  ![image](https://user-images.githubusercontent.com/20436113/131938065-973be539-6585-44d8-9dde-1a3b82135b78.png)
 - 실제로 view 페이지를 조회해 보면 모든 room에 대한 정보, 예약 상태, 결제 상태 등의 정보를 종합적으로 알 수 있다.
 
-  ![97C55B73-4275-4385-964A-80768D033C66](https://user-images.githubusercontent.com/20436113/130180654-1d2c582f-8aa6-4bbd-b2a3-cf39a34e0b85.jpeg)
+  ![8E1B38B6-CD21-42C2-A1D7-B19EF5620DE5](https://user-images.githubusercontent.com/20436113/131938379-6e45b13c-3ab5-4688-bec5-f0d82668f3ab.jpeg)
 
+  
   
 ## API 게이트웨이
 
@@ -261,22 +261,22 @@ E-Book  서비스
 		  cloud:
 		    gateway:
 		      routes:
-			- id: customer
-			  uri: http://user04-customer:8080
+			- id: Rental
+			  uri: http://user21-rental:8080
 			  predicates:
-			    - Path=/reservations/** 
-			- id: payment
-			  uri: http://user04-payment:8080
+			    - Path=/rentals/** 
+			- id: Payment
+			  uri: http://user21-payment:8080
 			  predicates:
 			    - Path=/payments/** 
-			- id: hotel
-			  uri: http://user04-hotel:8080
+			- id: Manage
+			  uri: http://user21-manage:8080
 			  predicates:
-			    - Path=/roomManagements/** 
-			- id: viewPage
-			  uri: http://user04-viewPage:8080
+			    - Path=/manages/** 
+			- id: ViewPage
+			  uri: http://user21-viewpage:8080
 			  predicates:
-			    - Path=/reservationStatusViews/**
+			    - Path= /rentalStatusViews/**
 		      globalcors:
 			corsConfigurations:
 			  '[/**]':
@@ -324,72 +324,72 @@ E-Book  서비스
           
             ```
             apiVersion: v1
-            kind: Service
-            metadata:
-              name: $_PROJECT_NAME
-              namespace: $_NAMESPACE
-              labels:
-                app: $_PROJECT_NAME
-            spec:
-              ports:
-                - port: 8080
-                  targetPort: 8080
-              selector:
-                app: $_PROJECT_NAME
-              type:
-                LoadBalancer   
+		  kind: Service
+		  metadata:
+		    name: $_PROJECT_NAME
+		    namespace: $_NAMESPACE
+		    labels:
+		      app: $_PROJECT_NAME
+		  spec:
+		    ports:
+		      - port: 8080
+			targetPort: 8080
+		    selector:
+		      app: $_PROJECT_NAME
+		    type:
+		      LoadBalancer   
             ```             
  
 적용된 Deploy, Service 및 API Gateway 엔드포인트 확인
 
-![image](https://user-images.githubusercontent.com/45943968/130165112-93587d48-d563-46f5-a432-a73ff951a530.png)
+![5AB463FB-7700-42CE-B484-A4F190BD23DC](https://user-images.githubusercontent.com/20436113/131938513-ecaa0028-4da5-4eaf-81dc-7266cab755db.jpeg)
 
 # Correlation
 
-hotel reservation 프로젝트에서는 PolicyHandler에서 처리 시 어떤 건에 대한 처리인지를 구별하기 위한 Correlation-key 구현을 
+e-book rental 프로젝트에서는 PolicyHandler에서 처리 시 어떤 건에 대한 처리인지를 구별하기 위한 Correlation-key 구현을 
 이벤트 클래스 안의 변수로 전달받아 서비스간 연관된 처리를 정확하게 구현하고 있습니다. 
 
 아래의 구현 예제를 보면
 
-예약(Reservation)을 하면 동시에 연관된 방(Room), 결제(Payment) 등의 서비스의 상태가 적당하게 변경이 되고,
-예약건의 취소를 수행하면 다시 연관된 방(Room), 결제(Payment) 등의 서비스의 상태값 등의 데이터가 적당한 상태로 변경되는 것을
+대여(Rental)을 하면 동시에 연관된 대여관리(Manage), 결제(Payment) 등의 서비스의 상태가 적당하게 변경이 되고,
+예약건의 취소를 수행하면 다시 연관된 대여관리(Manage), 결제(Payment) 등의 서비스의 상태값 등의 데이터가 적당한 상태로 변경되는 것을
 확인할 수 있습니다.
 
 
-예약등록
-http POST http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/reservations customerId=1 roomId=21 roomName=2101호 customerName=soyeon hotelId=1 hotelName=신라 checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=RSV_REQUESTED paymentStatus=PAY_REQUESTED
+대여요청
+http POST http://ae9e4f2df26fb4609ad3506aa7d808e4-1575466458.eu-west-2.elb.amazonaws.com:8080/rentals rentalId=1 bookId=1 rentalStatus=REQUESTED
 
-예약 후 - 예약 상태
-http GET http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/reservations
+대여요청 후 - 예약 상태
+http http://ae9e4f2df26fb4609ad3506aa7d808e4-1575466458.eu-west-2.elb.amazonaws.com:8080/rentals 
 
-![E9547BE6-E3F8-482E-9D0D-89F960A1E521](https://user-images.githubusercontent.com/20436113/130180823-d93b2798-e94a-4d9e-9079-d1a423650fec.jpeg)
-
-
-예약 후 - 결제 상태
-http GET http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/payments
-
-![CA0F6234-73A9-4053-BEB8-223915BF05E2](https://user-images.githubusercontent.com/20436113/130180841-9b9de6b5-3c2b-4545-9771-5ffcc2624362.jpeg)
+![343D02E0-D31B-4C34-9960-3B40C9F2DED4](https://user-images.githubusercontent.com/20436113/131938726-f1ef0cf3-6cc4-4059-bef0-a3c78081ac9e.jpeg)
 
 
-예약 취소
-http PATCH http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/reservations/2 reservationStatus=RSV_CANCELED
+대여요청 후 - 결제 상태
+http http://ae9e4f2df26fb4609ad3506aa7d808e4-1575466458.eu-west-2.elb.amazonaws.com:8080/payments
 
-취소 후 - 예약 상태
-http GET http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/reservations
-
-![469C164F-5ADD-4F4D-B785-16FAFF9EF3C3](https://user-images.githubusercontent.com/20436113/130180865-d2d6594b-f030-41a6-aa30-88026008093e.jpeg)
+![68B10EC5-D019-47D4-A92E-133F135AF186](https://user-images.githubusercontent.com/20436113/131938793-68611ad1-5ce4-458d-bfcb-5fe78d6cbc14.jpeg)
 
 
-취소 후 - 결제 상태
-http GET http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/payments
+대여요청 승인
+http PATCH http://a5ad5ea581539402cb2908592e29b179-597025294.eu-west-2.elb.amazonaws.com:8080/manages/1 rentalStatus=APPROVED
 
-![FB1A6505-C230-40AD-A6CD-11B94005E02C](https://user-images.githubusercontent.com/20436113/130180880-685e9c41-a751-4706-894d-62e9afb2c8ce.jpeg)
+승인 후 - 예약 상태
+http http://ae9e4f2df26fb4609ad3506aa7d808e4-1575466458.eu-west-2.elb.amazonaws.com:8080/rentals 
 
+![E6ACB43A-60A4-469C-80AE-39FC481BE4A8](https://user-images.githubusercontent.com/20436113/131938958-e1ac7b6c-ba51-4065-b363-f74b8259f992.jpeg)
+
+
+
+승인 후 - 결제 상태
+http http://ae9e4f2df26fb4609ad3506aa7d808e4-1575466458.eu-west-2.elb.amazonaws.com:8080/payments
+
+![787C6244-9E96-4EF0-86A8-8354A85604E6](https://user-images.githubusercontent.com/20436113/131938980-d348ccd2-3ea3-4d28-bfc5-0941ee2513e0.jpeg)
 
 
 ## DDD 의 적용
 
-- 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다. (예시는 Reservation 마이크로 서비스). 이때 가능한 현업에서 사용하는 언어 (유비쿼터스 랭귀지)를 그대로 사용하려고 노력했다. 현실에서 발생가는한 이벤트에 의하여 마이크로 서비스들이 상호 작용하기 좋은 모델링으로 구현을 하였다.
+- 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다. (예시는 Rental 마이크로 서비스). 이때 가능한 현업에서 사용하는 언어 (유비쿼터스 랭귀지)를 그대로 사용하려고 노력했다. 현실에서 발생가는한 이벤트에 의하여 마이크로 서비스들이 상호 작용하기 좋은 모델링으로 구현을 하였다.
 
 ```
 package project;
@@ -400,23 +400,15 @@ import java.util.List;
 import java.util.Date;
 
 @Entity
-@Table(name="Reservation_table")
-public class Reservation {
+@Table(name="Rental_table")
+public class Rental {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private Long id; 
-    private Long customerId;  // 고객 ID
-    private Long roomId; // 객실 ID
-    private String roomName; // 객실 이름
-    private String customerName; // 고객 이름 
-    private String reservationStatus; // 예약상태 (status: "RSV_REQUESTED", "RSV_APPROVED", "RSV_CANCELED", "RSV_REJECTED") 
-    private Long hotelId; // 호텔 ID
-    private String hotelName; // 호텔 이름
-    private Date checkInDate; // 체크인 날짜
-    private Date checkOutDate; // 체크아웃 날짜
-    private Long roomPrice; // 객실 가격
-    private String paymentStatus;  //결제상태 (status: "PAY_REQUESTED", "PAY_FINISHED", "PAY_CANCELED" )
+    private Long id;                //시퀀스 넘버
+    private Long rentalId;          //대여 ID
+    private Long bookId;            //책 ID
+    private String rentalStatus;    //대여 상태 : REQUESTED(대여요청됨), APPROVED(대여승인됨), CANCELED(대여취소됨), PAID(결제됨), REJECTED(대여거절됨)
 
 
     public Long getId() {
@@ -426,117 +418,62 @@ public class Reservation {
     public void setId(Long id) {
         this.id = id;
     }
-    public Long getCustomerId() {
-        return customerId;
+    public Long getRentalId() {
+        return rentalId;
     }
 
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
+    public void setRentalId(Long rentalId) {
+        this.rentalId = rentalId;
     }
-    public Long getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(Long roomId) {
-        this.roomId = roomId;
-    }
-    public String getCustomerName() {
-        return customerName;
+    public Long getBookId() {
+        return bookId;
     }
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
+    public void setBookId(Long bookId) {
+        this.bookId = bookId;
     }
-    public String getReservationStatus() {
-        return reservationStatus;
-    }
-
-    public void setReservationStatus(String reservationStatus) {
-        this.reservationStatus = reservationStatus;
-    }
-    public Long getHotelId() {
-        return hotelId;
+    public String getRentalStatus() {
+        return rentalStatus;
     }
 
-    public void setHotelId(Long hotelId) {
-        this.hotelId = hotelId;
-    }
-    public String getHotelName() {
-        return hotelName;
+    public void setRentalStatus(String rentalStatus) {
+        this.rentalStatus = rentalStatus;
     }
 
-    public void setHotelName(String hotelName) {
-        this.hotelName = hotelName;
-    }
-    public Date getCheckInDate() {
-        return checkInDate;
-    }
-
-    public void setCheckInDate(Date checkInDate) {
-        this.checkInDate = checkInDate;
-    }
-    public Date getCheckOutDate() {
-        return checkOutDate;
-    }
-
-    public void setCheckOutDate(Date checkOutDate) {
-        this.checkOutDate = checkOutDate;
-    }
-    public Long getRoomPrice() {
-        return roomPrice;
-    }
-
-    public void setRoomPrice(Long roomPrice) {
-        this.roomPrice = roomPrice;
-    }
-
-    public String getPaymentStatus() {
-        return this.paymentStatus;
-    }
-
-    public void setPaymentStatus(String paymentStatus) {
-        this.paymentStatus = paymentStatus;
-    }
-
-    public String getRoomName() {
-        return this.roomName;
-    }
-
-    public void setRoomName(String roomName) {
-        this.roomName = roomName;
-    }
 }
 
 ```
 - Entity Pattern 과 Repository Pattern 을 적용하여 JPA 를 통하여 다양한 데이터소스 유형 (RDB or NoSQL) 에 대한 별도의 처리가 없도록 데이터 접근 어댑터를 자동 생성하기 위하여 Spring Data REST 의 RestRepository 를 적용하였다
 ```
-package project;
+package rentalapp;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource(collectionResourceRel="reservations", path="reservations")
-public interface ReservationRepository extends PagingAndSortingRepository<Reservation, Long>{
+@RepositoryRestResource(collectionResourceRel="rentals", path="rentals")
+public interface RentalRepository extends PagingAndSortingRepository<Rental, Long>{
+
 
 }
+
 
 ```
 - 적용 후 REST API 의 테스트
 ```
-# hotel 서비스의 room 등록
-http POST http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/roomManagements roomId=10 roomName="110호" roomStatus="ROOM_CREATED" roomPrice=1000 hotelId=1 hotelName="신라"
+# manage 서비스의 book 등록
+http POST http://ae9e4f2df26fb4609ad3506aa7d808e4-1575466458.eu-west-2.elb.amazonaws.com:8080/manages bookId=1
 
-# customer 서비스의 예약 요청
-http POST http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/reservations customerId=1 roomId=10 roomName=“110호” customerName=“soyeon” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
+# rental 서비스의 대여 요청
+http POST http://ae9e4f2df26fb4609ad3506aa7d808e4-1575466458.eu-west-2.elb.amazonaws.com:8080/rentals rentalId=1 bookId=1 rentalStatus=REQUESTED
 
-# customer 서비스의 예약 상태 확인
-http GET http://a6a4aaabca1a8472bbc868fdedb425b2-1612457944.ap-northeast-2.elb.amazonaws.com:8080/reservations
+# rental 서비스의 대여 상태 확인
+http http://ae9e4f2df26fb4609ad3506aa7d808e4-1575466458.eu-west-2.elb.amazonaws.com:8080/rentals 
 
 ```
 
 ## 동기식 호출(Sync) 과 Fallback 처리
 
-분석단계에서의 조건 중 하나로 예약(customer)->결제(payment) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리하기로 하였다. 
+분석단계에서의 조건 중 하나로 대여(rental)->결제(payment) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리하기로 하였다. 
 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어있는 REST 서비스를 FeignClient로 이용하여 호출하도록 한다.
 
 - 결제 서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현 
@@ -548,48 +485,41 @@ package project.external;
 
 <!--import 문 생략 -->
 
-@FeignClient(name="Payment", url="${prop.room.url}")
+@FeignClient(name="Payment", url="${api.service.url}")
 public interface PaymentService {
-    @RequestMapping(method= RequestMethod.POST, path="/payments")
-    public void requestPayment(@RequestBody Payment payment);
+    @RequestMapping(method= RequestMethod.GET, path="/payments")
+    public void paymentrequest(@RequestBody Payment payment);
 
 }
+
 
 ```
 
 - 예약 요청을 받은 직후(@PostPersist) 가능상태 확인 및 결제를 동기(Sync)로 요청하도록 처리
 ```
-# Reservation.java (Entity)
+# Rental.java (Entity)
 
      @PostPersist
     public void onPostPersist(){
-        System.out.println("*****객실 예약이 요청됨*****");
+        System.out.println("######대여 요청 되었음#####");
 
-        /* 객실 예약이 요청됨 */
+        // 책 대여 요청
+        // 결제 동기 호출(req/res) 진행
+        // 결제가 진행가능한 지 확인 후 결제 진행
+        rentalapp.external.Payment payment = new rentalapp.external.Payment();
+        if(this.getRentalStatus().equals("REQUESTED")){
+            payment.setRentalId(this.getRentalId());
+            payment.setRentalStatus("PAID");
+        }
 
         // mappings goes here
-        /* 결제(payment) 동기 호출 진행 */
-        /* 결제 진행 가능 여부 확인 후 결제 */
-        project.external.Payment payment = new project.external.Payment();
-        if(this.getReservationStatus().equals("RSV_REQUESTED") && this.getPaymentStatus().equals("PAY_REQUESTED")){
+        RentalApplication.applicationContext.getBean(rentalapp.external.PaymentService.class)
+            .paymentrequest(payment);
 
-            payment.setReservationId(this.getId());
-            payment.setCustomerId(this.getCustomerId());
-            payment.setRoomId(this.getRoomId());
-            payment.setRoomName(this.getRoomName());
-            payment.setRoomPrice(this.getRoomPrice());
-            payment.setCustomerName(this.getCustomerName());
-            payment.setHotelId(this.getHotelId());
-            payment.setHotelName(this.getHotelName());
-            payment.setCheckInDate(this.getCheckInDate());
-            payment.setCheckOutDate(this.getCheckOutDate());
-            payment.setReservationStatus("RSV_REQUESTED");
-            payment.setPaymentStatus("PAY_FINISHED");
-        }
-        
-         CustomerApplication.applicationContext.getBean(project.external.PaymentService.class)
-            .requestPayment(payment);
-	  
+        RentalRequested rentalRequested = new RentalRequested();
+        BeanUtils.copyProperties(this, rentalRequested);
+        rentalRequested.publishAfterCommit();
+
     }
 ```
 
@@ -599,14 +529,14 @@ public interface PaymentService {
 # 결제 (payment) 서비스를 잠시 내려놓음 (ctrl+c)
 
 # 예약 요청  - Fail
-http POST http://localhost:8088/reservations customerId=1 roomId=10 roomName=“110호” customerName=“soyeon” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
+http POST http://ae9e4f2df26fb4609ad3506aa7d808e4-1575466458.eu-west-2.elb.amazonaws.com:8080/rentals rentalId=1 bookId=1 rentalStatus=REQUESTED
 
 # 결제서비스 재기동
 cd payment
 mvn spring-boot:run
 
 # 예약 요청  - Success
-http POST http://localhost:8088/reservations customerId=1 roomId=10 roomName=“110호” customerName=“soyeon” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
+http POST http://ae9e4f2df26fb4609ad3506aa7d808e4-1575466458.eu-west-2.elb.amazonaws.com:8080/rentals rentalId=1 bookId=1 rentalStatus=REQUESTED
 
 ```
 
@@ -616,7 +546,7 @@ http POST http://localhost:8088/reservations customerId=1 roomId=10 roomName=“
 
 ## 비동기식 호출 / 시간적 디커플링 / 장애격리 / 최종 (Eventual) 일관성 테스트
 
-결제가 이루어진 후에 예약 시스템의 상태가 업데이트 되고, 호텔 시스템의 상태 업데이트가 비동기식으로 호출된다.
+결제가 이루어진 후에 예약 시스템의 상태가 업데이트 되고, manage 시스템의 상태 업데이트가 비동기식으로 호출된다.
 - 이를 위하여 결제가 승인되면 결제가 승인 되었다는 이벤트를 카프카로 송출한다. (Publish)
  
 ```
@@ -634,19 +564,19 @@ import java.util.Date;
 public class Payment {
 
     ....
-   @PostPersist
+    @PostPersist
     public void onPostPersist(){
+        // 결제 완료
+        PaymentCompleted paymentCompleted = new PaymentCompleted();
+        BeanUtils.copyProperties(this, paymentCompleted);
+        paymentCompleted.publishAfterCommit();
 
-        /* 결제 승인 이벤트 */
-        PaymentFinished paymentFinished = new PaymentFinished();
-        BeanUtils.copyProperties(this, paymentFinished);
-        paymentFinished.publishAfterCommit();
     }
     ....
 }
 ```
 
-- 예약 시스템에서는 결제 승인 이벤트에 대해서 이를 수신하여 자신의 정책을 처리하도록 PolicyHandler 를 구현한다:
+- 대여 시스템에서는 결제 승인 이벤트에 대해서 이를 수신하여 자신의 정책을 처리하도록 PolicyHandler 를 구현한다:
 
 ```
 # PolicyHandler.java
@@ -657,30 +587,27 @@ package project;
 public class PolicyHandler{
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverPaymentFinished_UpdateReservationInfo(@Payload PaymentFinished paymentFinished){
-        /* 결제 완료 (PAY_FINISHED) */
-        /* 결제가 완료되면 객실 상태(paymentStatus)를 변경 */
- 
-        if(!paymentFinished.validate()) return;
+    public void wheneverPaymentCompleted_PaymentComplete(@Payload PaymentCompleted paymentCompleted){
+        //결제 완료됨
+        if(!paymentCompleted.validate()) return;
+        System.out.println("####PolicyHandler: wheneverPaymentCompleted_PaymentComplete####" );
+        System.out.println("\n\n##### listener PaymentComplete : " + paymentCompleted.toJson() + "\n\n");
 
-        System.out.println("\n\n##### listener UpdateReservationInfo : " + paymentFinished.toJson() + "\n\n");
-
-        saveChangedStatus(paymentFinished.getReservationId(), "", "PAY_FINISHED");
-
+        setChengedStatus(paymentCompleted.getRentalId(), "PAID");
     }
 ```
 
-그 외 예약 승인/거부는 예약/결제와 완전히 분리되어있으며, 이벤트 수신에 따라 처리되기 때문에, 유지보수로 인해 잠시 내려간 상태 라도 예약을 받는데 문제가 없다.
+그 외 대여 승인/거부는 대여/결제와 완전히 분리되어있으며, 이벤트 수신에 따라 처리되기 때문에, 유지보수로 인해 잠시 내려간 상태 라도 대여을 받는데 문제가 없다.
 
 ```
-# 호텔 서비스 (hotel) 를 잠시 내려놓음 (ctrl+c)
+# manaage 서비스 (manage) 를 잠시 내려놓음 (ctrl+c)
 
-# 예약 요청  - Success
-http POST http://localhost:8088/reservations customerId=1 roomId=10 roomName=“110호” customerName=“soyeon” hotelId=1 hotelName=“신라” checkInDate=2021-08-18 checkOutDate=2021-09-01 roomPrice=1000 reservationStatus=“RSV_REQUESTED" paymentStatus="PAY_REQUESTED"
+# 대여 요청  - Success
+http POST http://localhost:8080/rentals rentalId=1 bookId=1 rentalStatus=REQUESTED
    
 
-# 예약 상태 확인  - hotel 서비스와 상관없이 예약 상태는 정상 확인
-http GET http://localhost:8088/reservations
+# 대여 상태 확인  - manage 서비스와 상관없이 예약 상태는 정상 확인
+http GET http://localhost:8088/rentals
 ```
 
 
@@ -690,57 +617,49 @@ viewPage 는 RDB 계열의 데이터베이스인 Maria DB 를 사용하기로 �
 별다른 작업없이 기존의 Entity Pattern 과 Repository Pattern 적용과 데이터베이스 관련 설정 (pom.xml, application.yml) 만으로 Maria DB 에 부착시켰다.
 
 ```
-# ReservationStatusView.java
+# RentalStatusView.java
 
-package project;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Date;
 
 @Entity
-@Table(name="ReservationStatusView_table")
-public class ReservationStatusView {
+@Table(name="RentalStatusView_table")
+public class RentalStatusView {
 
 }
 
-# ReservationStatusViewRepository.java
-package project;
+# RentalStatusViewRepository.java
+package rentalapp;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface ReservationStatusViewRepository extends CrudRepository<ReservationStatusView, Long> {
-    ReservationStatusView findByReservationId(Long reservationId);
-    ReservationStatusView findByRoomId(Long roomId);
-    
+public interface RentalStatusViewRepository extends CrudRepository<RentalStatusView, Long> {
+
+    RentalStatusView findByRentalId(Long rentalId);
+    RentalStatusView findByBookId(Long bookId);
+
 }
 
 # pom.xml
 
 	<dependency>
-		<groupId>org.mariadb.jdbc</groupId>
-		<artifactId>mariadb-java-client</artifactId>
+		<groupId>com.h2database</groupId>
+		<artifactId>h2</artifactId>
 		<scope>runtime</scope>
 	</dependency>
+
 		
 
-# application.yml
-
-  datasource:
-    url: jdbc:mariadb://localhost:3306/test
-    driver-class-name: org.mariadb.jdbc.Driver
-    username: ####   (계정정보 숨김처리)
-    password: ####   (계정정보 숨김처리)
 
 ```
 
-실제 MariaDB 접속하여 확인 시, 데이터 확인 가능 (ex. Customer에서 객실 예약 요청한 경우)
+실제 MariaDB 접속하여 확인 시, 데이터 확인 가능 (ex. manage에서 book 생성한 경우)
 
-![image](https://user-images.githubusercontent.com/45943968/130158245-2d242319-ab00-4224-9c88-93f4a90b7311.png)
-
+![0C2AA4CE-B558-4CDB-AD29-5E91A65E60B1_4_5005_c](https://user-images.githubusercontent.com/20436113/131939966-cb384210-8140-4fa1-b129-c98ce9ac8ab3.jpeg)
 
 # 운영
 
@@ -750,19 +669,17 @@ public interface ReservationStatusViewRepository extends CrudRepository<Reservat
 각 구현체들은 각자의 source repository 에 구성되었고, 사용한 CI/CD 플랫폼은 AWS를 사용하였으며, pipeline build script 는 각 프로젝트 폴더 이하 buildspec.yml 에 포함되었다.
 
 AWS CodeBuild 적용 현황
-![운영_코드빌드1](https://user-images.githubusercontent.com/27762942/130167703-3ca166f7-2c4d-4dc1-9d06-18a06fb70cfe.png)
+![image](https://user-images.githubusercontent.com/20436113/131940006-305ed7d0-b627-4c50-a5e4-dc77e6ab032d.png)
 
 webhook을 통한 CI 확인
-![운영_코드빌드2](https://user-images.githubusercontent.com/27762942/130167704-10fb2f7a-c7cc-4c57-92d5-743a09fdc2fc.png)
+![image](https://user-images.githubusercontent.com/20436113/131940075-59cc9a69-aca8-4662-a0f0-3452459da5c4.png)
 
 AWS ECR 적용 현황
-![image](https://user-images.githubusercontent.com/27762942/130168223-34759c4e-8f01-4c4a-95ed-921c9d41a71d.png)
-
+![image](https://user-images.githubusercontent.com/20436113/131940122-67a82aa5-2273-4722-92d0-ef62c53e1025.png)
 
 EKS에 배포된 내용
 
-![eks](https://user-images.githubusercontent.com/87056402/130163825-92ffa0ae-26b2-4c79-b562-680c892fcdd9.png)
-
+![5AB463FB-7700-42CE-B484-A4F190BD23DC](https://user-images.githubusercontent.com/20436113/131940146-6740a26b-b218-4e41-9b52-892377bf5b5a.jpeg)
 
 
 ## ConfigMap 설정
@@ -777,10 +694,10 @@ EKS에 배포된 내용
  apiVersion: v1
  kind: ConfigMap
  metadata:
-   name: hotel-configmap
-   namespace: hotels
+   name: rental-configmap
+   namespace: rental
  data:
-   apiurl: "http://user04-gateway:8080"
+   apiurl: "http://user21-gateway:8080"
 
 ```
 buildspec 수정
@@ -796,73 +713,72 @@ buildspec 수정
                     - name: apiurl
                       valueFrom:
                         configMapKeyRef:
-                          name: hotel-configmap
+                          name: rental-configmap
                           key: apiurl 
                         
 ```            
 application.yml 수정
 ```
-prop:
-  room:
+api:
+  service:
     url: ${apiurl}
 ``` 
 
 동기 호출 URL 실행
-![image](https://user-images.githubusercontent.com/45943968/130181863-9911ec1b-ce8d-4411-9334-8ddacb634035.png)
+![595E4E43-DD82-46DD-BF8D-21698E9864EE_4_5005_c](https://user-images.githubusercontent.com/20436113/131940229-bec678bd-c666-41e6-9a2f-d545a0b56e39.jpeg)
 
 
 ## 동기식 호출 / 서킷 브레이킹 / 장애격리
 
 * 서킷 브레이킹 프레임워크의 선택: istio의 Destination Rule을 적용 Traffic 관리함.
 
-시나리오는 고객서비스(customer)-->결제(payment) 시의 연결을 RESTful Request/Response 로 연동하여 구현이 되어있고, 결제 요청이 과도할 경우 CB 를 통하여 장애격리.
+시나리오는 렌탈서비스(rental)-->결제(payment) 시의 연결을 RESTful Request/Response 로 연동하여 구현이 되어있고, 결제 요청이 과도할 경우 CB 를 통하여 장애격리.
 
 * 부하테스터 siege 툴을 통한 서킷 브레이커 동작 확인:
 - 동시사용자 10명
 - 10초 동안 실시
 
 ```
-siege -c10 -t10s -v http://user04-gateway:8080/payments 
+# siege 서비스 생성
+kubectl run siege --image=apexacme/siege-nginx -n onedayclass
+
+# seige pod 접속
+kubectl exec pod/siege-d484db9c-mr7s9 -n rental -it -- /bin/bash
+
+# URL 호출
+siege -c10 -t10S -v --content-type "application/json" 'http://user21-rental:8080/rentals POST {“rentalId”: 1, “bookId”: 2, “rentalStatus”: “REQUESTED"}'
 
 ```
-![cb2](https://user-images.githubusercontent.com/87056402/130167142-290b8c51-3f08-4d84-91d0-878af3818059.png)
+![4C68F8BB-D148-4C89-BCED-9366BFE13D01](https://user-images.githubusercontent.com/20436113/131940447-436be5b7-b866-4169-96a4-8a9acdbc9fb2.jpeg)
 CB가 없기 때문에 100% 성공
 
 ```
-kubectl apply -f destinationRule -n hotels
+# istio-injection 활성화
+kubectl label namespace rental istio-injection=enabled 
 
-kind: DestinationRule
+# VirtualService 적용 
+kubectl apply -f VirtualService.yaml
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
 metadata:
-  name: dr-payment
+  name: vs-rev
+  namespace: rental
 spec:
-  host: user04-payment
-  trafficPolicy:
-    connectionPool:
-      http:
-        http1MaxPendingRequests: 1
-        maxRequestsPerConnection: 1
+  hosts:
+  - "user21-rental"
+  http:
+  - route:
+    - destination:
+        host: "user21-rental"
+    timeout: 0.1s
+	
+
 ```
 
 
-![cb3](https://user-images.githubusercontent.com/87056402/130168542-681767c3-970f-4a86-a2b9-4599abbb14cd.png)
+![59E483F1-5FD2-4198-8CEF-0DE9CC743DD7](https://user-images.githubusercontent.com/20436113/131940536-95c22212-a512-4e43-b4a9-c16ae12301bd.jpeg)
 CB적용 되어 일부 실패 확인
-
-
-### 오토스케일 아웃
-앞서 CB 는 시스템을 안정되게 운영할 수 있게 해줬지만 사용자의 요청을 100% 받아들여주지 못했기 때문에 이에 대한 보완책으로 자동화된 확장 기능을 적용하고자 한다. 
-
-
-- 결제서비스에 대한 replica 를 동적으로 늘려주도록 HPA 를 설정한다. 설정은 CPU 사용량이 15프로를 넘어서면 replica 를 10개까지 늘려준다:
-```
-kubectl autoscale deploy user04-payment --min=1 --max=10 --cpu-percent=15 -n hotels
-```
-- CB 에서 했던 방식대로 부하 발생
-```
-siege -c10 -t10s -v http://user04-gateway:8080/payments 
-```
-- 어느정도 시간이 흐른 후 (약 30초) 스케일 아웃이 벌어지는 것을 확인할 수 있다:
-
-![hpa1](https://user-images.githubusercontent.com/87056402/130169194-50946c9e-8c49-4078-8c52-ad6b056f98b2.png)
 
 
 
@@ -874,26 +790,18 @@ siege -c10 -t10s -v http://user04-gateway:8080/payments
 
 - seige 로 배포작업 직전에 워크로드를 모니터링 함.
 ```
-siege -c100 -t10S -v --content-type "application/json" 'http://user04-customer:8080/reservations'
+siege -c30 -t30S -v http://user21-viewpage:8080/rentalStatusViews
 
 ```
 
 ```
 # buildspec.yaml 의 readiness probe 의 설정:
+![2F49D377-B2F0-4149-9A64-AC73D20069F7_4_5005_c](https://user-images.githubusercontent.com/20436113/131940605-b0377b37-0833-4746-af00-22dce4687fa4.jpeg)
 
-                    readinessProbe:
-                      httpGet:
-                        path: /actuator/health
-                        port: 8080
-                      initialDelaySeconds: 10
-                      timeoutSeconds: 2
-                      periodSeconds: 5
-                      failureThreshold: 10
-```
 
 Customer 서비스 신규 버전으로 배포
 
-![readiness](https://user-images.githubusercontent.com/87056402/130174091-65759533-049d-4fca-aeca-3c2a52d61925.png)
+![AEA660A4-C9FA-48D7-835C-0D5FA119266A](https://user-images.githubusercontent.com/20436113/131940866-60caee2b-cd68-4e83-bbc6-4c9203f9ad78.jpeg)
 
 배포기간 동안 Availability 가 변화없기 때문에 무정지 재배포가 성공한 것으로 확인됨.
 
@@ -901,30 +809,18 @@ Customer 서비스 신규 버전으로 배포
 
 테스트를 위해 buildspec.yml을 아래와 같이 수정 후 배포
 
-```
-livenessProbe:
-                      # httpGet:
-                      #   path: /actuator/health
-                      #   port: 8080
-                      exec:
-                        command:
-                        - cat
-                        - /tmp/healthy
-```
+![C737694D-C337-45BE-901A-2431C267629C_4_5005_c](https://user-images.githubusercontent.com/20436113/131940891-6e9ef970-3ca5-4044-bc0b-ac97ea47a29a.jpeg)
 
-![liveness1](https://user-images.githubusercontent.com/87056402/130177941-952fd244-5160-4873-b88a-d4951849dc58.png)
+
 
  pod 상태 확인
  
+ 컨테이너 실행 후 30초 동인은 정상이나, 이후 /tmp/healthy 파일이 삭제되어 livenessProbe에서 실패를 리턴하게 됨. (이후 자동으로 재시작)
+
  kubectl describe ~ 로 pod에 들어가서 아래 메시지 확인
- ```
- Warning  Unhealthy  26s (x2 over 31s)     kubelet            Liveness probe failed: cat: /tmp/healthy: No such file or directory
- ```
+ ![9E5F7934-46B8-4BD8-B41D-D6DE08288474_4_5005_c](https://user-images.githubusercontent.com/20436113/131941036-67abcf62-b3d3-489a-adfb-ac068e3c7083.jpeg)
 
-/tmp/healthy 파일 생성
-```
-kubectl exec -it pod/user04-customer-5b7c4b6d7-p95n7 -n hotels -- touch /tmp/healthy
-```
-![liveness2](https://user-images.githubusercontent.com/87056402/130178115-6f9e3288-0220-43ea-a8f2-b0982470a3e5.png)
 
-성공 확인
+rental의 Restart 횟수 증가함을 확인
+![D2A2AC53-18D3-4E99-8370-F1403C703FB5_4_5005_c](https://user-images.githubusercontent.com/20436113/131940942-2b58cf0d-b54d-4461-bb6d-54e504d1dcf5.jpeg)
+
