@@ -642,20 +642,11 @@ public interface RentalStatusViewRepository extends CrudRepository<RentalStatusV
 
 }
 
-# pom.xml
-
-	<dependency>
-		<groupId>com.h2database</groupId>
-		<artifactId>h2</artifactId>
-		<scope>runtime</scope>
-	</dependency>
-
-		
-
+![4FDD8866-9A65-48E2-AF42-5F516A561916_4_5005_c](https://user-images.githubusercontent.com/20436113/131949435-89dcacf9-15e0-4d5c-bae9-11a8c6c0b9f7.jpeg)
 
 ```
 
-실제 MariaDB 접속하여 확인 시, 데이터 확인 가능 (ex. manage에서 book 생성한 경우)
+실제 확인 시, 데이터 확인 가능 (ex. manage에서 book 생성한 경우)
 
 ![0C2AA4CE-B558-4CDB-AD29-5E91A65E60B1_4_5005_c](https://user-images.githubusercontent.com/20436113/131939966-cb384210-8140-4fa1-b129-c98ce9ac8ab3.jpeg)
 
