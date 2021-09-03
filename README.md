@@ -795,19 +795,18 @@ Customer 서비스 신규 버전으로 배포
 배포기간 동안 Availability 가 변화없기 때문에 무정지 재배포가 성공한 것으로 확인됨.
 
 ##Liveness Probe
-테스트를 위해 buildspec.yml을 아래와 같이 수정 후 배포
-![78809977-B5AF-43CE-99E1-5A0B43168BF8_4_5005_c](https://user-images.githubusercontent.com/20436113/131950002-f6efebe7-d8e4-46f2-ab86-a9ee9cfb185c.jpeg)
+테스트를 위해 deployment.yml을 아래와 같이 수정 후 배포
+![78809977-B5AF-43CE-99E1-5A0B43168BF8_4_5005_c](https://user-images.githubusercontent.com/20436113/131950147-25348f78-3900-49c4-8d9b-14513b439fb9.jpeg)
 
 
-pod 상태 확인
- 
- 컨테이너 실행 후 30초 동인은 정상이나, 이후 /tmp/healthy 파일이 삭제되어 livenessProbe에서 실패를 리턴하게 됨. (이후 자동으로 재시작)
+
+컨테이너 실행 후 30초 동인은 정상이나, 이후 /tmp/healthy 파일이 삭제되어 livenessProbe에서 실패를 리턴하게 됨. (이후 자동으로 재시작)
+kubectl describe pod~ 로 확인
+![9E5F7934-46B8-4BD8-B41D-D6DE08288474_4_5005_c](https://user-images.githubusercontent.com/20436113/131950195-04ce6221-486e-4c38-ad83-f0ae362b6d89.jpeg)
+
+pod의 restart 횟수가 증가함을 확인
+
+![D2A2AC53-18D3-4E99-8370-F1403C703FB5_4_5005_c](https://user-images.githubusercontent.com/20436113/131950208-ce47d2d8-f634-40c9-a7c7-861921d475f1.jpeg)
 
 
-kubectl describe ~ 로 pod에 들어가서 아래 메시지 확인
-![9E5F7934-46B8-4BD8-B41D-D6DE08288474_4_5005_c](https://user-images.githubusercontent.com/20436113/131950049-959f6ca8-7574-4fd9-a1eb-4be2e78b13a7.jpeg)
-
-
-rental의 Restart 횟수 증가함을 확인
-![D2A2AC53-18D3-4E99-8370-F1403C703FB5_4_5005_c](https://user-images.githubusercontent.com/20436113/131950062-2a82a3c1-22be-4dd8-934b-42ae2792806c.jpeg)
 
