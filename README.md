@@ -380,10 +380,10 @@ http http://ae9e4f2df26fb4609ad3506aa7d808e4-1575466458.eu-west-2.elb.amazonaws.
 
 
 
-승인 후 - 대여 상태
+승인 후 - 대여관리 상태
 http http://ae9e4f2df26fb4609ad3506aa7d808e4-1575466458.eu-west-2.elb.amazonaws.com:8080/managed
 
-![2140C382-57A0-49B4-AB37-0E235F79A1BF](https://user-images.githubusercontent.com/20436113/131948985-1094eb69-f281-4c54-b17a-7c9bef1220b9.jpeg)
+![6F2E3AD4-4A8A-4F21-9E8F-37DE03A0C255](https://user-images.githubusercontent.com/20436113/131949067-6ec0de40-66d4-4df0-af9f-690f042932f2.jpeg)
 
 ## DDD 의 적용
 
