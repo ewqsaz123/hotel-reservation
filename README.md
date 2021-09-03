@@ -807,9 +807,10 @@ Customer 서비스 신규 버전으로 배포
  컨테이너 실행 후 30초 동인은 정상이나, 이후 /tmp/healthy 파일이 삭제되어 livenessProbe에서 실패를 리턴하게 됨. (이후 자동으로 재시작)
 
  kubectl describe ~ 로 pod에 들어가서 아래 메시지 확인
- ![9E5F7934-46B8-4BD8-B41D-D6DE08288474_4_5005_c](https://user-images.githubusercontent.com/20436113/131941036-67abcf62-b3d3-489a-adfb-ac068e3c7083.jpeg)
+![9E5F7934-46B8-4BD8-B41D-D6DE08288474_4_5005_c](https://user-images.githubusercontent.com/20436113/131949910-6c0c1fac-5681-484a-99ea-b1a4d2da43d9.jpeg)
 
 
 rental의 Restart 횟수 증가함을 확인
-![D2A2AC53-18D3-4E99-8370-F1403C703FB5_4_5005_c](https://user-images.githubusercontent.com/20436113/131940942-2b58cf0d-b54d-4461-bb6d-54e504d1dcf5.jpeg)
+![D2A2AC53-18D3-4E99-8370-F1403C703FB5_4_5005_c](https://user-images.githubusercontent.com/20436113/131949928-acfaf963-0c89-4bf0-8966-f1128672829b.jpeg)
+
 
